@@ -17,7 +17,7 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
 	<h4 class="text-md-center"><i class="fas fa-trash mx-2"></i>Opciones para eliminar:</h4>
-	<form name=compartir id=compartir method=post action="" enctype="multipart/form-data" novalidate>
+	<form name=eliminar id=eliminar method=post action="" enctype="multipart/form-data" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label for="nombre" class="font-weight-bold">Nombre del archivo</label>

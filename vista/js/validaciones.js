@@ -30,8 +30,6 @@ $(document).ready(function() {
         height: 100
     });
   });
-// @param {String} color
-$('#descripcion').summernote('backColor', 'red');
 
 // --- Alta o modificación: ---
 $('#amarchivo').bootstrapValidator({
