@@ -1,0 +1,40 @@
+/* --- Estilo aplicado a todas las páginas del proyecto --- */
+
+body {
+    background:lightblue url(../img/fondo.jpg) fixed center;
+    /* Fuente del fondo: https://www.pexels.com/photo/abstract-art-artistic-background-1103970/ */
+}
+
+#cuerpo {
+    background: rgba(233, 236, 239, 0.8);
+}
+
+#pie {
+    background: rgba(23, 162, 184, 0.5);
+}
+
+
+.has-error, .has-error .help-block {
+    color: darkred;
+}
+
+.has-success, .has-success .help-block {
+    color: darkgreen;
+}
+
+/* Estilo para hacer funcionar botón, ver volverArriba.js */
+
+#volverArriba {
+    display: none; /* Oculto por defecto */
+    cursor: default; /* Evita que se marque con manito */
+    border: none; /* Sin bordes, reemplaza estilo de bootstrap */
+    /* Ajustes para fijar en esquina inferior derecha, encima del contenido: */
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+}
+
+#volverArriba:hover {
+    background-color: #333; /* Pone fondo oscuro al pasar el cursor */
+}
