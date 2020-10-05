@@ -5,7 +5,7 @@
 Con FiDrive  podrás compartir todos los archivos que desees de manera sencilla. Podrá determinar cuánto tiempo deberá estar disponible la URL y cuántas veces se podrá acceder a él; para limitar la cantidad de descargas.
 
 - **Autor**: Arian Acevedo
-- **Legajo**: Leg. FAI 1157
+- **Legajo**: FAI 1157
 - **Email**: arian.acevedo@est.fi.uncoma.edu.ar
 - **Teléfono**: (0299) 674-9276
 

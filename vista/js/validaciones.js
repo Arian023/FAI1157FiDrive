@@ -85,6 +85,35 @@ $('#amarchivo').bootstrapValidator({
     }
 });
 
+function elegirIcono() {
+    // Lee el nombre del archivo elegido (antes de ser enviado) y marca automáticamente el ícono sugerido
+    var archivo = document.getElementById("archivoIng").value;
+    var imagen = /(.*?)\.(jpg|png|gif|bmp|tiff|jpeg|webp)$/;
+    var comprimido = /(.*?)\.(zip|rar|7z||tiff|jpeg)$/;
+    var documento = /(.*?)\.(docx|doc|odt|rtf|txt|docm|dot|dotx|dotm)$/;
+    var pdf = /(.*?)\.(pdf)$/;
+    var planilla = /(.*?)\.(xls|xlsx|xlsm|xltx|xlt|ods)$/;
+    // Método match(regex) devuelve arreglo, pero se compara con nulo para ver si hay coincidencia
+    if(archivo.match(imagen) != null){
+        // alert("Imagen seleccionada");
+        document.getElementById("img").checked = true;
+    } else if(archivo.match(comprimido) != null) {
+        // alert("comprimido seleccionado");
+        document.getElementById("zip").checked = true;
+    } else if(archivo.match(documento) != null) {
+        // alert("documento seleccionado");
+        document.getElementById("doc").checked = true;
+    } else if(archivo.match(pdf) != null) {
+        // alert("pdf seleccionado");
+        document.getElementById("pdf").checked = true;
+    } else if(archivo.match(planilla) != null) {
+        // alert("planilla seleccionada");
+        document.getElementById("xls").checked = true;
+    } else {
+        // alert("No se eligió archivo");
+    }
+  }
+
 // --- Compartir archivo: ---
 $('#compartir').bootstrapValidator({
     feedbackIcons: {
@@ -104,12 +133,12 @@ $('#compartir').bootstrapValidator({
         validators: {
             notEmpty: {
                 message: 'Si elige proteger, debe ingresar una contraseña. '
-            },
+            }/* Reemplazado por plugin validarClave.js ,
             stringLength: {
                 min: 6,
                 max: 30,
                 message: 'La contraseña debe tener entre 6 y 30 caracteres. '
-            }
+            }*/
         }
         },
         usuario: {
@@ -125,6 +154,12 @@ $('#compartir').bootstrapValidator({
 // Habilitar campo clave - Fuente: https://stackoverflow.com/a/15140254
 document.getElementById('proteger').onchange = function() {
     document.getElementById('clave').disabled = !this.checked;
+    // Si está desmarcado, se oculta campo y no se valida
+    if (document.getElementById('clave').disabled) {
+        document.getElementById('validarClave').style.display = "none";
+    } else {
+        document.getElementById('validarClave').style.display = "block";
+    }
 };
 
 // --- Dejar de compartir archivo: ---

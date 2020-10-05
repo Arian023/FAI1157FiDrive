@@ -13,6 +13,17 @@ include_once("../vista/estructura/cabecera.php")?>
 		<li>Seleccionar Icono que se va a utilizar (Imagen, Zip, Doc, PDF, XLS). Usar CheckBox.</li>
 		<li>Clave del Archivo a modificar. (Este debe ser un campo Oculto.</li>
 	</ul>
+	<b class="lead">
+	Controles para amarchivo.php:
+	</p>
+	<ul class="lead">
+		<li>Nombre del Archivo no debe quedar vacío.</li>
+		<li>La descripción del Archivo, es contenido enriquecido, buscar un editor para cargarlo
+		<li>Agregar siempre la siguiente descripción por defecto: "Esta es una descripción genérica, si lo necesita la puede cambiar."</li>
+		<li>El usuario debe ser Seleccionado</li>
+		<li>El icono, debería ser sugerido teniendo en cuenta la extensión del archivo seleccionado. Todo esto usado JavaScript.</li>
+		<li>Si el campo Clave es igual a cero, al submitir el formulario, se debe enviar el parámetro accion = Alta; caso contrario debe enviar en el parámetro accion = Modificar</li>
+	</ul>
 </div> <!-- Fin div consigna -->
 
 <hr>
@@ -32,7 +43,7 @@ include_once("../vista/estructura/cabecera.php")?>
 			</div>
 			<div class="form-group col-md-6">
 				<label for=archivoIng class="font-weight-bold">Seleccione un archivo</label>
-				<input type=file class="form-control" name=archivoIng id=archivoIng disabled>
+				<input type=file class="form-control" name=archivoIng id=archivoIng onchange="elegirIcono()"> <!-- Corre método para marcar icono sugerido según extensión de archivo -->
 			</div>
 		</div>
 		<div class="form-row">

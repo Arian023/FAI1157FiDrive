@@ -19,8 +19,8 @@
             <a class="dropdown-item" href="../vista/eliminararchivocompartido.php">Dejar de compartir archivo</a>
             <a class="dropdown-item" href="../vista/eliminararchivo.php">Eliminar archivo</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item disabled" href="../vista/contenido.php" aria-disabled="true">Ver contenido</a>
-            <a class="dropdown-item disabled" href="../vista/compartidos.php" aria-disabled="true">Mostrar compartidos</a>
+            <a class="dropdown-item" href="../vista/contenido.php">Ver contenido</a>
+            <a class="dropdown-item" href="../vista/compartidos.php">Mostrar compartidos</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="../vista/explorar.php" id="navbarDropdown" role="button" title="Ver otros archivos">

@@ -9,6 +9,13 @@ include_once("../vista/estructura/cabecera.php")?>
 	</p>
 </div> <!-- Fin div consigna -->
 
+<div class="alert alert-info alert-dismissible fade show" role='alert'>
+		Segunda entrega (ID commit d5c7912f16ffaa1d45a6ac8c10c37dcd8225a8e1): <a href=https://github.com/Arian023/FAI1157FiDrive/commit/d5c7912f16ffaa1d45a6ac8c10c37dcd8225a8e1>https://github.com/Arian023/FAI1157FiDrive</a>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
 <div class="container p-2" id=mapa> <!-- Comienzo div mapa -->
 	<br>
 	<h3 class="text-md-center"><i class="fas fa-layer-group mx-2"></i> Mapa del sitio:</h3><br>
@@ -20,8 +27,8 @@ include_once("../vista/estructura/cabecera.php")?>
 			<li><a href="eliminararchivocompartido.php" class="btn btn-block btn-lg btn-outline-warning">Dejar de compartir archivo</a></li><br>
 		</div>
 		<div class="col-md-6">
-			<li><a href="contenido.php" class="btn btn-block btn-lg btn-outline-dark disabled">Ver contenido carpeta</a></li><br>
-			<li><a href="compartidos.php" class="btn btn-block btn-lg btn-outline-dark disabled">Mostrar compartidos</a></li><br>
+			<li><a href="contenido.php" class="btn btn-block btn-lg btn-outline-dark">Ver contenido carpeta</a></li><br>
+			<li><a href="compartidos.php" class="btn btn-block btn-lg btn-outline-dark">Mostrar compartidos</a></li><br>
 			<li><a href="eliminararchivo.php" class="btn btn-block btn-lg btn-outline-danger">Eliminar archivo</a></li><br>
 		</div>
 	</div>

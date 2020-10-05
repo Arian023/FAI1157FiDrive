@@ -38,3 +38,15 @@ body {
 #volverArriba:hover {
     background-color: #333; /* Pone fondo oscuro al pasar el cursor */
 }
+
+/* Ocultar textos de ayuda, ver validarClave.js 
+
+Innecesario, da sombra al formulario de la misma clase
+.password-strength {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  }
+*/
+  
+.js-hidden {
+display: none;
+}

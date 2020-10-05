@@ -1,9 +1,9 @@
 <?php
-class control_TP3 {
+class control_archivos {
     // Nota: Este control trabaja con archivos ubicados en una subcarpeta de donde se encuentra la página web invocada
     // Ejemplo: Sitio en ../vista/index.php, archivo en ../vista/archivos/ejemplo.txt 
 
-public $dir = 'archivos/'; // Carpeta por defecto
+public $dir = "../archivos/"; // Carpeta por defecto
 private $phpFileUploadErrors = array(
     0 => 'There is no error, the file uploaded with success',
     1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
@@ -14,6 +14,8 @@ private $phpFileUploadErrors = array(
     7 => 'Failed to write file to disk.',
     8 => 'A PHP extension stopped the file upload.',
 ); // Fuente: https://www.php.net/manual/en/features.file-upload.errors.php
+
+// --- Funciones de errores ---
 
 public function mensajeError($archivo) {
     /* Manejo de errores mostrando texto con el nombre del archivo
@@ -43,6 +45,8 @@ public function mensajeError($archivo) {
     }
     return $mensaje;
 }
+
+// --- Funciones de escritura (guardado) ---
 
 public function guardar($archivo) {
     /* Copia desde la carpeta temporal de PHP hasta la subcarpeta ../archivo
@@ -80,6 +84,8 @@ public function guardarEn($archivo, $ruta) {
      */
     return copy($archivo['tmp_name'], $ruta.$archivo['name']);
 }
+
+// --- Funciones de lectura ---
 
 public function datosArchivo($archivo) {
     /* Muestra los detalles de un archivo, para ser mostrado en la página web
@@ -128,5 +134,24 @@ public function mostrarTexto($archivo) {
     return $texto;
 }
 
-} // -- Fin clase control_TP3 --
+public function listarArchivos() {
+    /* Utiliza función scandir de PHP para mostrar los archivos almacenados
+     * @see https://www.php.net/manual/es/function.scandir.php
+     * @return Array $archivos La lista de archivos entera en orden ascendente
+     */
+    
+    $archivos = scandir($this->dir);
+    return $archivos;
+}
+
+public function crearCarpeta() {
+    /* Por el momento crea una subcarpeta llamada nuevo dentro de /archivos/
+     * @see https://www.w3schools.com/php/func_filesystem_mkdir.asp
+     * @return boolean true/false si 
+     */
+    $ruta = $this->dir."nuevo";
+    return mkdir($ruta);
+}
+
+} // -- Fin clase control_archivos --
 ?>
