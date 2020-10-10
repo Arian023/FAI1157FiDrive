@@ -7,10 +7,23 @@ include_once("../vista/estructura/cabecera.php")?>
 	<p class="lead">FiDrive es una aplicación Web que nos permite subir a la nube archivos, ya sea luego necesitamos compartirlos o simplemente para guardarlos.<br>
 	Con FiDrive podrás compartir todos los archivos que desees de manera sencilla. Podrá determinar cuánto tiempo deberá estar disponible la URL y cuántas veces se podrá acceder a él; para limitar la cantidad de descargas. 
 	</p>
+	<hr class="my-2">
+	<h3 class="lead"><b>Funcionalidades y detalles:</b></h3>
+	<ul>
+		<li>Listado de archivos con funciones de compartir/modificar/eliminar</li>
+		<li>Íconos mostrados según extensión de archivo o carpeta <small>(aún no lee icono seleccionado por usuario)</small></li>
+		<li>Crear carpeta y navegar por subcarpetas <small>(no permite cambiar nombre o borrar)</small></li>
+		<li>Animación al pasar cursor por cada caja de icono</li>
+		<li>Botón de "Volver arriba" al navegar por páginas largas <small>(aparece flotando en la esquina inferior derecha)</small></li>
+		<li>Buscador de palabras en el mismo sitio <small>(integrado a la barra de navegación)</small></li>
+		<li>Plugins de formularios para generar texto enriquecido y validar fortaleza de contraseña</li>
+		<li>Sitio web mayormente responsive y visualmente organizado <small>(excepto detalles para centrar cajas)</small></li>
+		<li>Navegación en barra superior y mapa del sitio a continuación <small>(Nuevo archivo carga en carpeta raíz, demás opciones accesibles directamente a modo ilustrativo)</small></li>
+	</ul>
 </div> <!-- Fin div consigna -->
 
-<div class="alert alert-info alert-dismissible fade show" role='alert'>
-		Segunda entrega (ID commit d5c7912f16ffaa1d45a6ac8c10c37dcd8225a8e1): <a href=https://github.com/Arian023/FAI1157FiDrive/commit/d5c7912f16ffaa1d45a6ac8c10c37dcd8225a8e1>https://github.com/Arian023/FAI1157FiDrive</a>
+<div class="alert alert-info alert-dismissible fade show my-2" role='alert'>
+		Tercera entrega en: <a href="https://github.com/Arian023/FAI1157FiDrive/">https://github.com/Arian023/FAI1157FiDrive</a>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 		<span aria-hidden="true">&times;</span>
 	</button>
@@ -22,14 +35,14 @@ include_once("../vista/estructura/cabecera.php")?>
 	<ul class="list-unstyled">
 	<div class="row">
 		<div class="col-md-6">
-			<li><a href="amarchivo.php" class="btn btn-block btn-lg btn-outline-info">Alta o modificación</a></li><br>
-			<li><a href="compartirarchivo.php" class="btn btn-block btn-lg btn-outline-success">Compartir archivo</a></li><br>
-			<li><a href="eliminararchivocompartido.php" class="btn btn-block btn-lg btn-outline-warning">Dejar de compartir archivo</a></li><br>
+			<li><a href="contenido.php" class="btn btn-block btn-lg btn-outline-info">Ver listado de archivos</a></li><br>
+			<li><a href="amarchivo.php" class="btn btn-block btn-lg btn-outline-info">Nuevo archivo</a></li><br>
+			<li><a href="compartidos.php" class="btn btn-block btn-lg btn-outline-info">Mostrar compartidos</a></li><br>
 		</div>
 		<div class="col-md-6">
-			<li><a href="contenido.php" class="btn btn-block btn-lg btn-outline-dark">Ver contenido carpeta</a></li><br>
-			<li><a href="compartidos.php" class="btn btn-block btn-lg btn-outline-dark">Mostrar compartidos</a></li><br>
-			<li><a href="eliminararchivo.php" class="btn btn-block btn-lg btn-outline-danger">Eliminar archivo</a></li><br>
+			<li><a href="compartirarchivo.php" class="btn btn-block btn-lg btn-outline-dark">Compartir archivo <small>(sin seleccionar)</small></a></li><br>
+			<li><a href="eliminararchivocompartido.php" class="btn btn-block btn-lg btn-outline-dark">Dejar de compartir archivo <small>(sin seleccionar)</small></a></li><br>
+			<li><a href="eliminararchivo.php" class="btn btn-block btn-lg btn-outline-dark">Eliminar archivo <small>(sin seleccionar)</small></a></li><br>
 		</div>
 	</div>
 	</ul>

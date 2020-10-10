@@ -39,14 +39,14 @@ $('#amarchivo').bootstrapValidator({
         validating: 'fas fa-refresh'
     },
     fields: {
-        nombre: {
+        titulo: {
         validators: {
             notEmpty: {
-                message: 'Debe ingresar el nombre del archivo. '
+                message: 'Debe ingresar un título descriptivo del archivo. '
             },
             stringLength: {
                 min: 3,
-                message: 'El nombre debe ser mayor a 3 caracteres. '
+                message: 'El título debe ser mayor a 3 caracteres. '
             }
         }
         },
@@ -89,7 +89,7 @@ function elegirIcono() {
     // Lee el nombre del archivo elegido (antes de ser enviado) y marca automáticamente el ícono sugerido
     var archivo = document.getElementById("archivoIng").value;
     var imagen = /(.*?)\.(jpg|png|gif|bmp|tiff|jpeg|webp)$/;
-    var comprimido = /(.*?)\.(zip|rar|7z||tiff|jpeg)$/;
+    var comprimido = /(.*?)\.(zip|rar|7z|tar|gz|bin)$/;
     var documento = /(.*?)\.(docx|doc|odt|rtf|txt|docm|dot|dotx|dotm)$/;
     var pdf = /(.*?)\.(pdf)$/;
     var planilla = /(.*?)\.(xls|xlsx|xlsm|xltx|xlt|ods)$/;
@@ -151,16 +151,29 @@ $('#compartir').bootstrapValidator({
     }
 });
 
-// Habilitar campo clave - Fuente: https://stackoverflow.com/a/15140254
-document.getElementById('proteger').onchange = function() {
-    document.getElementById('clave').disabled = !this.checked;
-    // Si está desmarcado, se oculta campo y no se valida
-    if (document.getElementById('clave').disabled) {
-        document.getElementById('validarClave').style.display = "none";
+function generarLink() {
+    /* @see Utiliza método encontrado en: https://debugpointer.com/create-md5-hash-in-javascript/
+     * Toma los datos del formulario y genera un enlace con un hash md5 mostrado en el último campo del formulario
+     */
+    var nombre = document.getElementById("nombre").value;
+    var ruta = document.getElementById("ruta").value;
+    var cantDias = document.getElementById("cantDias").value;
+    var cantDescargas = document.getElementById("cantDescargas").value;
+    var fechaHoraActual = new Date();
+
+    // Recorto dos puntos y barra ( ../ ) para obtener una ruta correcta
+    ruta = ruta.substring(3);
+
+    // Si la cantidad de días compartidos o la de descarga son nulas, el hash debe ser un número fijo
+    // Nota: Buscar mejor forma de obtener ruta actual del proyecto, se asume carpeta mencionada a continuación
+    if ( cantDias == 0 || cantDescargas == 0) {
+        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+nombre+"?compartido="+9007199254740991;
     } else {
-        document.getElementById('validarClave').style.display = "block";
+        // Se genera hash usando fecha y hora actual, asumiendo que no se generará el mismo hash en otro día con los mismos cantDias y cantDescargas
+        var hash = md5(fechaHoraActual+cantDias+cantDescargas);
+        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+nombre+"?compartido="+hash;
     }
-};
+}
 
 // --- Dejar de compartir archivo: ---
 $('#nocompartir').bootstrapValidator({
@@ -225,3 +238,17 @@ $('#eliminar').bootstrapValidator({
         }
     }
 });
+
+// --- Ver contenido: ---
+/* Reemplazado por validación integrada de Bootstrap (sale un tooltip más zafable, sino este texto arruina el orden)
+$('#nuevacarpeta').bootstrapValidator({
+    fields: {
+        nombre: {
+        validators: {
+            notEmpty: {
+                message: 'Debe ingresar un nombre de carpeta. '
+            }
+        }
+    }
+    }
+}); */

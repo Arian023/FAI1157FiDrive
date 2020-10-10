@@ -8,8 +8,8 @@
 	// =============================
 	
 	$browseDirectories = true; // Navigate into sub-folders
-	$title = 'Index of {{path}}';
-	$subtitle = '{{files}} objects in this folder, {{size}} total'; // Empty to disable
+	$title = 'Índice de {{path}}';
+	$subtitle = '{{files}} elementos en esta carpeta, {{size}} en total'; // Empty to disable
 	$breadcrumbs = false; // Make links in {{path}}
 	$showParent = true; // Display a (parent directory) link
 	$showDirectories = true;

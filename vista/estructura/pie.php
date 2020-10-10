@@ -32,12 +32,10 @@
 <button class="btn btn-info shadow-sm" onclick="irArriba()" id="volverArriba" title="Volver arriba"><i class="fas fa-chevron-up"></i></button>
 
 <!-- Carga script editor de texto enriquecido (validaciones.js lo carga en idioma español) -->
-<script src="../vista/js/summernote-bs4.min.js"></script> <!--
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script> -->
+<script src="../vista/js/summernote-bs4.min.js"></script>
 <script src="../vista/js/summernote-es-ES.js"></script>
 
-<!-- Carga script para validar fuerza de contraseña -->
-<script src="../vista/js/validarClave.js"></script>
-
+<!-- Carga script para generar hash MD5 -->
+<script src="../vista/js/md5.js"></script>
 </body>
 </html>

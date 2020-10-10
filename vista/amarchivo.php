@@ -29,27 +29,33 @@ include_once("../vista/estructura/cabecera.php")?>
 <hr>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
-	<h4 class="text-md-center"><i class="fas fa-upload mx-2"></i>Ingrese los siguientes datos para cargar o modificar el archivo:</h4>
-	<form name=amarchivo id=amarchivo method=post action="" enctype="multipart/form-data" novalidate>
+	<h4 class="text-md-center"><i class="fas fa-upload mx-2"></i>Ingrese los siguientes datos para <?= empty($modificar) ? "cargar" : "modificar" ?> el archivo:</h4>
+	<form name=amarchivo id=amarchivo method=post action="carga.php" enctype="multipart/form-data" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
-				<label for="nombre" class="font-weight-bold">Nombre del archivo</label>
+				<label for="titulo" class="font-weight-bold">Título del archivo</label>
 				<div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tag"></i></span>
                     </div>
-					<input type=text class="form-control" name=nombre id=nombre value="1234.png">
+					<input type=text class=form-control name=titulo id=titulo value="1234.png">
 				</div>
 			</div>
 			<div class="form-group col-md-6">
-				<label for=archivoIng class="font-weight-bold">Seleccione un archivo</label>
-				<input type=file class="form-control" name=archivoIng id=archivoIng onchange="elegirIcono()"> <!-- Corre método para marcar icono sugerido según extensión de archivo -->
+				<label for=archivoIng class="font-weight-bold">Archivo seleccionado</label>
+				<?php // Puedo mostrar un campo de texto ilustrativo sobre el archivo seleccionado, en lugar de botón de carga
+				if (isset($_GET['nombre']) )  {
+					echo "<input type=text class='form-control' name=archivoIng id=archivoIng value='".$_GET['ruta'].$_GET['nombre']."' readonly>"; 
+				} else {
+					echo "<input type=file class=form-control name=archivoIng id=archivoIng onchange=elegirIcono()>
+					<!-- Corre método para marcar icono sugerido según extensión de archivo -->";
+				} ?>
 			</div>
 		</div>
 		<div class="form-row">
 			<div class="form-group col-md-12">
 				<label for="descripcion" class="font-weight-bold">Escriba una descripción</label>
-				<textarea class="form-control" name=descripcion id=descripcion rows=2>Esta es una descripción genérica, si lo necesita la puede cambiar.</textarea>
+				<textarea class=form-control name=descripcion id=descripcion rows=2>Esta es una descripción genérica, si lo necesita la puede cambiar.</textarea>
 			</div>
 		</div>
 		<div class="form-row">
@@ -59,7 +65,7 @@ include_once("../vista/estructura/cabecera.php")?>
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
                     </div>
-					<select class="form-control" name=usuario id=usuario>
+					<select class=form-control name=usuario id=usuario>
 						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
 						<option value=admin>Administrador</option>
 						<option value=visitante>Visitante</option>
@@ -68,13 +74,19 @@ include_once("../vista/estructura/cabecera.php")?>
                 </div>
 			</div>
 			<div class="form-group col-md-6">
-				<label for="clave" class="font-weight-bold">Clave del archivo</label>
-					<div class=input-group>
-					<div class="input-group-prepend">
-					<span class="input-group-text"><i class="fas fa-key"></i></span>
-					</div>
-					<input type=password class="form-control" name=clave id=clave>
-				</div>
+				<!-- Hace un echo del valor que recibe desde contenido.php -->
+				<input type=hidden class=form-control name=nombre id=nombre 
+					<?php if (isset($_GET['nombre']) ) echo 'value="'.$_GET['nombre'].'"'?> >
+				<input type=hidden class=form-control name=ruta id=ruta 
+					<?php if (isset($_GET['ruta']) ) echo 'value="'.$_GET['ruta'].'/"'?> >
+				<input type=hidden class=form-control name=modificar id=modificar 
+					<?php if (isset($_GET['modificar']) ) echo 'value="'.$_GET['modificar'].'"'?> >
+				<script type="text/javascript">
+					// Deshabilitar campo archivoIng cuando se recibe valor de modificar desde contenido.php
+					if (document.getElementById('modificar').value != 0) {
+						document.getElementById('archivoIng').disabled = true;
+					}
+				</script>
 			</div>
 		</div>
 		<div class="form-row">
@@ -115,13 +127,16 @@ include_once("../vista/estructura/cabecera.php")?>
 			<div class="form-group col-md-6">
 			</div>
 			<div class="form-group col-md-6 text-right">
-				<input name=enviar id=enviar type=submit value="Enviar archivo" class="btn btn-primary">
+				<input name=enviar id=enviar type=submit value="Enviar archivo" class="btn btn-info">
 			</div>
 		</div>
 	</form> <!-- Fin formulario amarchivo -->
 </div> <!-- Fin div formulario -->
 
 <hr>
-<a href="../vista/index.php" class="btn btn-outline-dark">Volver al inicio</a>
+<div class=row>
+	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+</div>
 </div> <!-- Fin div cuerpo -->
 <?php include_once("../vista/estructura/pie.php"); ?>

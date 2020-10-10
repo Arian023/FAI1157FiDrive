@@ -18,20 +18,32 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
 	<h4 class="text-md-center"><i class="fas fa-lock mx-2"></i>Eliminar compartido:</h4>
-	<form name=nocompartir id=nocompartir method=post action="" enctype="multipart/form-data" novalidate>
+	<form name=nocompartir id=nocompartir method=post action="nocompartir.php" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label for="nombre" class="font-weight-bold">Nombre del compartido</label>
 				<div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tag"></i></span>
-                    </div>
-					<input type=text class="form-control" name=nombre id=nombre readonly value="1234.png">
+					</div>
+					<input type=text class=form-control name=nombre id=nombre readonly 
+					<?php if (isset($_GET['nombre']) ) {
+						echo 'value="'.$_GET['nombre'].'"';
+					} else { 
+						echo 'value="1234.png"';
+					} ?> >
 				</div>
+				<input type=hidden name=ruta id=ruta 
+					<?php if (isset($_GET['ruta']) ) echo 'value="'.$_GET['ruta'].'"'?> >
 			</div>
 			<div class="form-group col-md-6">
 				<label for=cant class="font-weight-bold" readonly>Cantidad compartidos</label>
-				<input type=number class="form-control" name=cant id=cant readonly value=999>
+				<div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                    </div>
+					<input type=number class="form-control" name=cant id=cant readonly value=999>
+                </div>
 			</div>
 		</div>
 		<div class="form-row">
@@ -49,7 +61,7 @@ include_once("../vista/estructura/cabecera.php")?>
 					</select>
                 </div>
 			</div>
-			<div class="form-group col-md-6">
+			<div class="form-group col-md-12">
 				<label for="descripcion" class="font-weight-bold">Motivo por dejar de compartir:</label>
 				<textarea class="form-control" name=descripcion id=descripcion rows=2>Esta es una descripción genérica, si lo necesita la puede cambiar.</textarea>
 			</div>
@@ -65,6 +77,9 @@ include_once("../vista/estructura/cabecera.php")?>
 </div> <!-- Fin div formulario -->
 
 <hr>
-<a href="../vista/index.php" class="btn btn-outline-dark">Volver al inicio</a>
+<div class=row>
+	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+</div>
 </div> <!-- Fin div cuerpo -->
 <?php include_once("../vista/estructura/pie.php"); ?>

@@ -14,13 +14,13 @@
             Archivo
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="../vista/amarchivo.php">Alta o modificación</a>
-            <a class="dropdown-item" href="../vista/compartirarchivo.php">Compartir archivo</a>
-            <a class="dropdown-item" href="../vista/eliminararchivocompartido.php">Dejar de compartir archivo</a>
-            <a class="dropdown-item" href="../vista/eliminararchivo.php">Eliminar archivo</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="../vista/contenido.php">Ver contenido</a>
+            <a class="dropdown-item" href="../vista/amarchivo.php">Nuevo archivo <small>(en raíz)</small></a>
+            <a class="dropdown-item" href="../vista/contenido.php">Mostrar listado</a>
             <a class="dropdown-item" href="../vista/compartidos.php">Mostrar compartidos</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="../vista/compartirarchivo.php">Compartir <small>(archivo sin selec)</small></a>
+            <a class="dropdown-item" href="../vista/eliminararchivocompartido.php">Dejar de compartir <small>(archivo sin selec)</small></a>
+            <a class="dropdown-item" href="../vista/eliminararchivo.php">Eliminar <small>(archivo sin selec)</small></a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="../vista/explorar.php" id="navbarDropdown" role="button" title="Ver otros archivos">
