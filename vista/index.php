@@ -22,11 +22,17 @@ include_once("../vista/estructura/cabecera.php")?>
 	</ul>
 </div> <!-- Fin div consigna -->
 
-<div class="alert alert-info alert-dismissible fade show my-2" role='alert'>
-		Tercera entrega en: <a href="https://github.com/Arian023/FAI1157FiDrive/">https://github.com/Arian023/FAI1157FiDrive</a>
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		<span aria-hidden="true">&times;</span>
-	</button>
+<div class="alert alert-warning alert-dismissible fade show my-2" role='alert'>
+	Cuarta entrega en: <a href="https://github.com/Arian023/FAI1157FiDrive/">https://github.com/Arian023/FAI1157FiDrive</a><br><br>
+	<b>Entrega incompleta 29/10:</b> <br>
+	<ul>
+		<li>amarchivo.php no funciona el alta y aún no se probó modificación</li>
+		<li>contenido.php fue actualizado con funcionalidad de ver detalles en modal (ventana flotante), pero no se pudo probar funcionamiento</li>
+		<li>Pendiente realizar la funcionalidad de compartir, borrar y mostrar compartidos</li>
+		<li>Pendiente reorganizar estructura de ../vista/ en subcarpetas para formularios y action</li>
+	</ul>
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	<span aria-hidden="true">&times;</span></button>
 </div>
 
 <div class="container p-2" id=mapa> <!-- Comienzo div mapa -->

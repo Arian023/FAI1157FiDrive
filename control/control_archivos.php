@@ -3,7 +3,7 @@ class control_archivos {
     // Nota: Este control trabaja con archivos ubicados en una subcarpeta de donde se encuentra la página web invocada
     // Ejemplo: Sitio en ../vista/index.php, archivo en ../vista/archivos/ejemplo.txt 
 
-public $dir = "../archivos/"; // Carpeta por defecto
+private $dir = "../archivos/"; // Carpeta por defecto
 private $phpFileUploadErrors = array(
     0 => 'There is no error, the file uploaded with success',
     1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
@@ -66,22 +66,89 @@ public function crearDescripcion($ruta, $nom, $desc) {
     return file_put_contents($ruta.$nomDescripcion, $desc);;
 }
 
-public function guardarComo($archivo, $ruta, $nom, $desc, $icono) {
-    /* Procedimiento completo de guardado - SIN USO EN SEGUNDA ENTREGA
-     * @param Array $archivo Trae información de UN archivo (ej: $_FILES['archivoIng'])
-     * @return String $mensaje El resultado del copiado
+public function guardarComo($archivo, $datosIng) {
+    /* Procedimiento de guardado - CUARTA ENTREGA
+     * @param Array $Archivo Trae los datos del archivo a cargar (ej: $_FILES['archivoIng'])
+     * @param Array $datosIng Trae información del formulario (ej: $_POST)
+     * @return int $codError El resultado del copiado (0 = éxito, 1 = error copia, 2 y 3 = error BD)
      */
 
-    $errorCopia = copy($archivo['tmp_name'], $ruta.$nom);
-    if (!$errorCopia) {
-        $mensaje = "Error al copiar";
-    } else {
-        $mensaje = "Copiado con éxito";
-        // $errorDescripcion = crearDescripcion($ruta, $nom, $desc);
-    }
-    // Guardar icono (y otro metadato como fecha de subida, fecha de modificación) en otro archivo oculto de texto (empieza con punto)
+    // Llama a los ABM para crear objetos y cargar los datos:
+    $AbmUsuario = new abmusuario();
+    $AbmArchivoCargado = new abmarchivocargado();
+    $AbmTipo = new abmestadotipos();
+    $AbmEstado = new abmarchivocargadoestado();
 
-    return $mensaje;
+    // Toma los valores para cargar en la base de datos
+    $objUsuario = $AbmUsuario->buscar( array('idusuario',$datosIng['usuario']) );
+    switch($datosIng['icono']) {
+        case "img": $acicono = "fas fa-file-image";
+            break;
+        case "zip": $acicono = "fas fa-file-archive";
+            break;
+        case "doc": $acicono = "fas fa-file-word";
+            break;
+        case "pdf": $acicono = "fas fa-file-pdf";
+            break;
+        case "xls": $acicono = "fas fas fa-file-excel";
+            break;
+        default: $acicono = "fas fa-file";
+            break;
+        }
+    // Prepara arreglo de parámetros para el alta en tabla archivocargado:
+    $datosArchivo = array(
+        "idarchivocargado" => null,
+        "acnombre" => $datosIng['acnombre'],
+        "acdescripcion" => $datosIng['acdescripcion'],
+        "acicono" => $acicono,
+        "idusuario" => $objUsuario[0],
+        "aclinkacceso" => $this->dir.$archivo['name'],
+        "accantidaddescarga" => 0,
+        "accantidadusada" => 0,
+        "acfechainiciocompartir" => null,
+        "acfechafincompartir" => null,
+        "acprotegidoclave" => null,
+    );
+
+    if( $AbmArchivoCargado->alta($datosArchivo) ){ // <<---- NO FUNCIONA: "Object of class usuario could not be converted to string"
+        // Se obtiene instancia de objeto archivo, aprovechando los mismos datos para el alta:
+        $objArchivocargado = $AbmArchivoCargado->buscar($datosArchivo);
+
+        $objEstadoTipo = $AbmTipo->buscar( array('idestadotipo'=>1) );
+        // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
+        $datosEstado = array(
+            "idestadotipos " => $objEstadoTipo[0], // "Cargado"
+            "acedescripcion" => "Cargado en el servidor por ".$objUsuario[0]->getuslogin()." el día ".date("d/m/Y"),
+            "idusuario" => $objUsuario[0],
+            "idarchivocargado" => $objArchivocargado[0],
+        );
+        if ($AbmEstado->alta($datosEstado)) { 
+            // Si se pudo cargar en la BD, realiza el proceso de copiado:
+            $copiado = copy($archivo['tmp_name'], $this->dir.$archivo['name']);
+            if ($copiado) {
+                // Si copió a la carpeta de archivos y se registró en BD con éxito:
+                $codError = 0;
+            } else {
+                // Si no se pudo copiar, cancela registro:
+                $codError = 1;
+                $AbmArchivoCargado->baja($datosArchivo);
+                $AbmEstado->baja($datosEstado);
+                /* Nota: Desconozco cómo realizar la "transacción" para que sea más transparente que realice los ambos pasos 
+                (cargar en dos tablas y realizar la copia), sin tener que estar borrando en caso que falle. 
+                No es un manejo de errores exhaustivo. También se podría invertir el procedimiento, 
+                primero copiando el archivo temporal al servidor y luego cargando en la BD, pero se presenta la misma situación.
+                */ 
+            }
+        } else {
+            // Si no se pudo cargar el estado en la BD:
+            $codError = 3;
+        }
+    } else {
+        // Si no se pudo cargar datos en la BD:
+        $codError = 2;
+    }
+    // Retorna número en base al error
+    return $codError;
 }
 
 public function guardar($archivo) {
@@ -140,16 +207,82 @@ public function crearCarpeta($ruta, $nombre) {
     return $creado;
 }
 
-public function modificar($ruta, $nom, $titulo, $desc, $icono) {
-    /* Procedimiento de modificación - SIN USO EN SEGUNDA ENTREGA
-     * @param String $ruta Indica la ruta del archivo a modificar (ej: '../archivos/')
-     * @param String $nom Nombre del archivo (ej: 'imagen.jpg')
-     * @param String $titulo Título descriptivo
-     * @param String $desc Descripción en editor de texto enriquecido
-     * @param String $icono Nombre abreviado elegido en amarchivo.php (ej: 'zip')
-     * @return boolean Resultado de la operación
+public function modificar($datosIng) {
+    /* Procedimiento de modificación - CUARTA ENTREGA
+     * @param Array $datosIng Trae información del formulario (ej: $_POST)
+     * @return boolean El resultado de la modificación
      */
-    return true;
+
+    // Llama a los ABM para crear objetos y cargar los datos:
+    $AbmUsuario = new abmusuario();
+    $AbmArchivoCargado = new abmarchivocargado();
+    $AbmTipo = new abmestadotipos();
+    $AbmEstado = new abmarchivocargadoestado();
+    
+    $acnombre = $datosIng['acnombre'];
+    $acdescripcion = $datosIng['acdescripcion'];
+
+    // Toma los valores para cargar en la base de datos
+    $acnombre = $datosIng['acnombre'];
+    $acdescripcion = $datosIng['acdescripcion'];
+
+    // Se obtiene instancia de objeto usuario según su ID:
+    $objUsuario = $AbmUsuario->buscar( array('idusuario'=>$datosIng['usuario']) );
+    /* NOTA: En uso real no tiene sentido seleccionar usuario al cargar archivo 
+    (siendo un login que se realiza antes), pero como es una opción del formulario, 
+    se permite modificar usuario al que pertenece.
+    */
+    switch($datosIng['acicono']) {
+        case "img": $acicono = "fas fa-file-image";
+            break;
+        case "zip": $acicono = "fas fa-file-archive";
+            break;
+        case "doc": $acicono = "fas fa-file-word";
+            break;
+        case "pdf": $acicono = "fas fa-file-pdf";
+            break;
+        case "xls": $acicono = "fas fas fa-file-excel";
+            break;
+        default: $acicono = "fas fa-file";
+            break;
+        }
+
+    // Prepara arreglo de parámetros para el alta en tabla archivocargado:
+    $datosModArchivo = array(
+        "idarchivocargado" => $datosIng['idarchivo'],
+        "acnombre" => $acnombre,
+        "acdescripcion" => $acdescripcion,
+        "objusuario" => $objUsuario[0],
+        "acicono" => $acicono
+    );
+
+
+    if ($AbmArchivoCargado->modificacion($datosModArchivo)) {
+        // Se obtiene instancia de objeto archivo, ahora modificado
+        $objArchivocargado = $AbmArchivoCargado->buscar($datosModArchivo);
+
+        // Se obtiene instancia de objeto estadotipo según su ID (1 corresponde a 'Cargado'):
+        $objEstadoTipo = $AbmTipo->buscar( array('idestadotipos'=>1) );
+        // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
+        $datosModEstado = array(
+            "objestadotipos " => $objEstadoTipo[0],
+            "acedescripcion" => "Modificado en el servidor por ".$objUsuario[0]->getuslogin()." el día ".date("d/m/Y"),
+            "objusuario" => $objUsuario[0],
+            "objarchivocargado" => $objArchivocargado[0],
+        );
+
+        // Se obtiene lista de estados cargados - MODIFICAR ESTADO: FECHA FIN ULTIMO ESTADO
+        $listaEstados = $AbmEstado->buscar($datosModArchivo);
+
+        $cargado = $AbmEstado->alta($datosModEstado);
+    } else {
+        $cargado = false;
+    }
+
+    
+
+    // Realiza modificación y retorna true/false según éxito en la operación:
+    return $cargado;
 }
 
 public function noCompartir($ruta, $nom, $motivo) {

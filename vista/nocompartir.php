@@ -25,9 +25,11 @@ include_once("../vista/estructura/cabecera.php")?>
 		// Nota: En otra entrega se completará la función para insertar en la base de datos
 		// Realiza operación y según resultado que retorna, muestra éxito o error
 		if ( $control->noCompartir($ruta, $nombre, $motivo) ) { 
-			echo "<div class='alert alert-success text-center m-3 p-3' role='alert'><i class='fas fa-check-circle mx-2'></i>Se dejó de compartir $nombre con éxito</div>";
+			echo "<div class='alert alert-success text-center m-3 p-3' role='alert'>
+			<i class='fas fa-check-circle mx-2'></i>Se dejó de compartir $nombre con éxito</div>";
 		} else {
-			echo "<div class='alert alert-danger text-center m-3 p-3' role='alert'><i class='fas fa-times-circle mx-2'></i><b>Hubo un problema en la operación</b></div>";
+			echo "<div class='alert alert-danger text-center m-3 p-3' role='alert'>
+			<i class='fas fa-times-circle mx-2'></i><b>Hubo un problema en la operación</b></div>";
 		}
 	}
 	?>
@@ -36,8 +38,10 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <hr>
 <div class=row>
-	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
-	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
 </div>
 </div> <!-- Fin div cuerpo -->
 <?php include_once("../vista/estructura/pie.php"); ?>

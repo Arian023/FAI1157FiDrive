@@ -14,7 +14,7 @@
             Archivo
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="../vista/amarchivo.php">Nuevo archivo <small>(en raíz)</small></a>
+            <a class="dropdown-item" href="../vista/amarchivo.php">Nuevo archivo</a>
             <a class="dropdown-item" href="../vista/contenido.php">Mostrar listado</a>
             <a class="dropdown-item" href="../vista/compartidos.php">Mostrar compartidos</a>
             <div class="dropdown-divider"></div>

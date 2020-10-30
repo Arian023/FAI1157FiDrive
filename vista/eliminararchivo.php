@@ -38,10 +38,12 @@ include_once("../vista/estructura/cabecera.php")?>
 						} else { 
 							echo 'value="1234.png"';
 						} ?> >
+					<?php /* --- Sin uso en cuarta entrega ---
 					<input type=hidden class=form-control name=ruta id=ruta 
-						<?php if (isset($_GET['ruta']) ) echo 'value="'.$_GET['ruta'].'"'?> >
-					<input type=hidden class=form-control name=modificar id=modificar 
-						<?php if (isset($_GET['modificar']) ) echo 'value="'.$_GET['modificar'].'"'?> >
+						if (isset($_GET['ruta']) ) echo 'value="'.$_GET['ruta'].'"' >
+					*/?>
+					<input type=hidden class=form-control name=idarchivocargado id=idarchivocargado 
+						<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
 				</div>
 			</div>
 			<div class="form-group col-md-6">

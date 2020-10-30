@@ -17,7 +17,7 @@ include_once("../vista/estructura/cabecera.php")?>
 		<i class='fas fa-question-circle mx-2'></i>No se recibieron datos para realizar el borrado.</div>";
 	} else {
 		// Se identifica la ruta y nombre del archivo a borrar:
-		$ruta = $datosIng['ruta'];
+		// $ruta = $datosIng['ruta'];
 		$nombre = $datosIng['nombre'];
 		// Usado en futura entrega:
 		$motivo = $datosIng['descripcion'];
