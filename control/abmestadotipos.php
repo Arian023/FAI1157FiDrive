@@ -8,16 +8,16 @@ class abmestadotipos{
  * @return estadotipos
  */
 private function cargarObjeto($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( array_key_exists('idestadotipos',$param) &&
         array_key_exists('etdescripcion',$param) &&
         array_key_exists('etactivo',$param)
     ){
-        $obj = new estadotipos();
-        $obj->setear($param['idestadotipos'],  
+        $nuevoObjeto = new estadotipos();
+        $nuevoObjeto->setear($param['idestadotipos'],  
             $param['etdescripcion'], $param['etactivo']);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -27,14 +27,14 @@ private function cargarObjeto($param){
  * @return estadotipos
  */
 private function cargarObjetoConClave($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( isset($param['idestadotipos']) ){
-        $obj = new estadotipos();
-        $obj->setear($param['idestadotipos'], null, null, null, 
+        $nuevoObjeto = new estadotipos();
+        $nuevoObjeto->setear($param['idestadotipos'], null, null, null, 
             null, null, null, null, 
             null, null, null);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -88,7 +88,7 @@ public function baja($param){
  */
 public function modificacion($param){
     // echo "<i>**Realizando la modificación**</i>";
-    var_dump($param);
+    echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
         $Objestadotipos = $this->cargarObjeto($param);

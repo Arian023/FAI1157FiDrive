@@ -1,7 +1,7 @@
 <!-- Comienzo menú de navegación -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border rounded shadow-lg">
-    <a class="navbar-brand" href="../vista/index.php" title="Arian Acevedo - FAI1157">
-        <img src="../vista/img/logo.png" max-width="100" height="40" alt="FiDrive">
+    <a class="navbar-brand" href="../index/index.php" title="Arian Acevedo - FAI1157">
+        <img src="../../vista/img/logo.png" max-width="100" height="40" alt="FiDrive">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -14,16 +14,16 @@
             Archivo
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="../vista/amarchivo.php">Nuevo archivo</a>
-            <a class="dropdown-item" href="../vista/contenido.php">Mostrar listado</a>
-            <a class="dropdown-item" href="../vista/compartidos.php">Mostrar compartidos</a>
+            <a class="dropdown-item" href="../index/amarchivo.php">Nuevo archivo</a>
+            <a class="dropdown-item" href="../index/contenido.php">Mostrar listado</a>
+            <a class="dropdown-item" href="../index/compartidos.php">Mostrar compartidos</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="../vista/compartirarchivo.php">Compartir <small>(archivo sin selec)</small></a>
-            <a class="dropdown-item" href="../vista/eliminararchivocompartido.php">Dejar de compartir <small>(archivo sin selec)</small></a>
-            <a class="dropdown-item" href="../vista/eliminararchivo.php">Eliminar <small>(archivo sin selec)</small></a>
+            <a class="dropdown-item" href="../index/compartirarchivo.php">Compartir <small>(archivo sin selec)</small></a>
+            <a class="dropdown-item" href="../index/eliminararchivocompartido.php">Dejar de compartir <small>(archivo sin selec)</small></a>
+            <a class="dropdown-item" href="../index/eliminararchivo.php">Eliminar <small>(archivo sin selec)</small></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="../vista/explorar.php" id="navbarDropdown" role="button" title="Ver otros archivos">
+            <a class="nav-link" href="../../explorar.php" id="navbarDropdown" role="button" title="Ver otros archivos">
             Explorar proyecto
             </a>
         </li>

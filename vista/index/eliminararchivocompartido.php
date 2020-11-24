@@ -1,5 +1,5 @@
 <?php $Titulo = "Dejar de compartir archivo - FiDrive"; 
-include_once("../vista/estructura/cabecera.php")?>
+include_once("../../vista/estructura/cabecera.php")?>
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Dejar de compartir archivo</h1>
@@ -18,7 +18,7 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
 	<h4 class="text-md-center"><i class="fas fa-lock mx-2"></i>Eliminar compartido:</h4>
-	<form name=nocompartir id=nocompartir method=post action="nocompartir.php" novalidate>
+	<form name=nocompartir id=nocompartir method=post action="../action/nocompartir.php" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label for="nombre" class="font-weight-bold">Nombre del compartido</label>
@@ -78,8 +78,10 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <hr>
 <div class=row>
-	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
-	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../index/index.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
 </div>
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

@@ -8,7 +8,7 @@ class abmarchivocargado{
  * @return archivocargado
  */
 private function cargarObjeto($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( array_key_exists('idarchivocargado',$param) && 
         array_key_exists('acnombre',$param) && 
         array_key_exists('acdescripcion',$param) && 
@@ -18,18 +18,24 @@ private function cargarObjeto($param){
         array_key_exists('accantidaddescarga',$param) && 
         array_key_exists('accantidadusada',$param) && 
         array_key_exists('acfechainiciocompartir',$param) && 
-        array_key_exists('acfechafincompartir',$param) && 
+        array_key_exists('acefechafincompartir',$param) && 
         array_key_exists('acprotegidoclave',$param)
         ){
-        $obj = new archivocargado();
-        $obj->setear($param['idarchivocargado'], $param['acnombre'], 
+        $nuevoObjeto = new archivocargado();
+        // Carga el objeto que hace referencia a ID de usuario
+        $usuario = new usuario;
+        $usuario->setidusuario($param['idusuario']);
+        $usuario->cargar();
+
+        // Define todos los atributos del objeto archivocargado
+        $nuevoObjeto->setear($param['idarchivocargado'], $param['acnombre'], 
             $param['acdescripcion'], $param['acicono'], 
-            $param['idusuario'], $param['aclinkacceso'], 
+            $usuario, $param['aclinkacceso'], 
             $param['accantidaddescarga'], $param['accantidadusada'], 
-            $param['acfechainiciocompartir'], $param['acfechafincompartir'], 
+            $param['acfechainiciocompartir'], $param['acefechafincompartir'], 
             $param['acprotegidoclave']);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -39,14 +45,14 @@ private function cargarObjeto($param){
  * @return archivocargado
  */
 private function cargarObjetoConClave($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( isset($param['idarchivocargado']) ){
-        $obj = new archivocargado();
-        $obj->setear($param['idarchivocargado'], null, null, null, 
+        $nuevoObjeto = new archivocargado();
+        $nuevoObjeto->setear($param['idarchivocargado'], null, null, null, 
             null, null, null, null, 
             null, null, null);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -100,7 +106,6 @@ public function baja($param){
  */
 public function modificacion($param){
     // echo "<i>**Realizando la modificación**</i>";
-    var_dump($param);
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
         $Objarchivocargado = $this->cargarObjeto($param);
@@ -139,6 +144,7 @@ public function buscar($param){
             $where.=" and acfechainiciocompartir ='".$param['acfechainiciocompartir']."'";
         if  (isset($param['acefechafincompartir']))
             $where.=" and acefechafincompartir ='".$param['acefechafincompartir']."'";
+            // <-- En la base de datos aparece como A-C-E fechafincompartir, lo cual corresponde a archivocargadoestado 🤔
         if  (isset($param['acprotegidoclave']))
             $where.=" and acprotegidoclave ='".$param['acprotegidoclave']."'";
     }

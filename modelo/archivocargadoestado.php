@@ -69,11 +69,14 @@ public function insertar(){
     $resp = false;
     $base=new BaseDatos();
     // Si lleva ID Autoincrement, la consulta SQL no lleva dicho ID
-    $sql="INSERT INTO archivocargadoestado(idestadotipos, acedescripcion, idusuario, 
-        acefechaingreso, acefechafin, idarchivocargado) VALUES('"
-        .$this->getobjestadotipos()."', '".$this->getacedescripcion()."', '"
-        .$this->getobjusuario()."', '".$this->getacefechaingreso()."', '"
-        .$this->getacefechafin()."', '".$this->getobjarchivocargado()."');";
+    $sql="INSERT INTO archivocargadoestado(idestadotipos, acedescripcion, 
+    idusuario, acefechaingreso, acefechafin, idarchivocargado) VALUES('"
+        .$this->getobjestadotipos()->getidestadotipos()."', '"
+        .$this->getacedescripcion()."', '"
+        .$this->getobjusuario()->getidusuario()."', '"
+        .$this->getacefechaingreso()."', '"
+        .$this->getacefechafin()."', '"
+        .$this->getobjarchivocargado()->getidarchivocargado()."');";
     if ($base->Iniciar()) {
         if ($esteid = $base->Ejecutar($sql)) {
             // Si se usa ID autoincrement, descomentar lo siguiente:
@@ -92,13 +95,12 @@ public function modificar(){
     $resp = false;
     $base=new BaseDatos();
     $sql="UPDATE archivocargadoestado 
-    SET idestadotipos='".$this->getobjestadotipos()
+    SET idestadotipos='".$this->getobjestadotipos()->getidestadotipos()
     ."', acedescripcion='".$this->getacedescripcion()
-    ."', acicono='".$this->getacicono()
-    ."', idusuario='".$this->getobjusuario()
+    ."', idusuario='".$this->getobjusuario()->getidusuario()
     ."', acefechaingreso='".$this->getacefechaingreso()
     ."', acefechafin='".$this->getacefechafin()
-    ."', idarchivocargado='".$this->getobjarchivocargado()
+    ."', idarchivocargado='".$this->getobjarchivocargado()->getidarchivocargado()
     ."' WHERE idarchivocargadoestado=".$this->getidarchivocargadoestado();
     if ($base->Iniciar()) {
         if ($base->Ejecutar($sql)) {
@@ -155,7 +157,7 @@ public static function listar($parametro=""){
                 $archivocargado->cargar();
 
                 $obj->setear($row['idarchivocargadoestado'], $estadotipos, 
-                $row['acedescripcion'], $row['acicono'], 
+                $row['acedescripcion'], 
                 $usuario, $row['acefechaingreso'], 
                 $row['acefechafin'], $archivocargado);
                 array_push($arreglo, $obj);
@@ -191,14 +193,6 @@ public function getacedescripcion() {
 }
 public function setacedescripcion($acedescripcion) {
     $this->acedescripcion = $acedescripcion;
-    return $this;
-}
-
-public function getacicono() {
-    return $this->acicono;
-}
-public function setacicono($acicono) {
-    $this->acicono = $acicono;
     return $this;
 }
 

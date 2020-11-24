@@ -8,7 +8,7 @@ class abmarchivocargadoestado{
  * @return archivocargadoestado
  */
 private function cargarObjeto($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( array_key_exists('idarchivocargadoestado',$param) &&
         array_key_exists('idestadotipos',$param) &&
         array_key_exists('acedescripcion',$param) &&
@@ -17,13 +17,28 @@ private function cargarObjeto($param){
         array_key_exists('acefechafin',$param) &&
         array_key_exists('idarchivocargado',$param)
     ){
-        $obj = new archivocargadoestado();
-        $obj->setear($param['idarchivocargadoestado'], $param['idestadotipos'], 
-        $param['acedescripcion'], $param['idusuario'], 
+
+        // Carga los objetos que hacen referencia a sus ID
+        $objusuario = new usuario;
+        $objusuario->setidusuario($param['idusuario']);
+        $objusuario->cargar();
+
+        $objestadotipos = new estadotipos;
+        $objestadotipos->setidestadotipos($param['idestadotipos']);
+        $objestadotipos->cargar();
+        
+        $objarchivocargado = new archivocargado;
+        $objarchivocargado->setidarchivocargado($param['idarchivocargado']);
+        $objarchivocargado->cargar();
+
+        // Define todos los atributos del objeto archivocargadoestado
+        $nuevoObjeto = new archivocargadoestado();
+        $nuevoObjeto->setear($param['idarchivocargadoestado'], $objestadotipos, 
+        $param['acedescripcion'], $objusuario, 
         $param['acefechaingreso'], $param['acefechafin'], 
-        $param['idarchivocargado']);
+        $objarchivocargado);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -33,14 +48,14 @@ private function cargarObjeto($param){
  * @return archivocargadoestado
  */
 private function cargarObjetoConClave($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( isset($param['idarchivocargadoestado']) ){
-        $obj = new archivocargadoestado();
-        $obj->setear($param['idarchivocargadoestado'], null, null, null, 
+        $nuevoObjeto = new archivocargadoestado();
+        $nuevoObjeto->setear($param['idarchivocargadoestado'], null, null, null, 
             null, null, null, null, 
             null, null, null);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -61,9 +76,7 @@ private function seteadosCamposClaves($param){
  */
 public function alta($param){
     $resp = false;
-    // $param['idarchivocargadoestado'] =null;
     $Objarchivocargadoestado = $this->cargarObjeto($param);
-    // verEstructura($Objarchivocargadoestado);
     if ($Objarchivocargadoestado!=null and $Objarchivocargadoestado->insertar()){
         $resp = true;
     }
@@ -93,8 +106,6 @@ public function baja($param){
  * @return boolean
  */
 public function modificacion($param){
-    // echo "<i>**Realizando la modificación**</i>";
-    var_dump($param);
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
         $Objarchivocargadoestado = $this->cargarObjeto($param);
@@ -131,6 +142,76 @@ public function buscar($param){
     $arreglo = archivocargadoestado::listar($where);  
     return $arreglo;
 }
+
+/**
+ * permite obtener el objeto correspondiente al último estado que no haya expirado
+ * @param int $idarchivocargado
+ * @return archivocargadoestado / false si no encuentra
+ */
+public function ultimoEstadoVigente($idarchivocargado) {
+    // Busca el registro de estados del archivo según ID y que su estado no haya expirado:
+	$estado = $this->buscar(
+        array('idarchivocargado' => $idarchivocargado, 'acefechafin' => "0000-00-00 00:00:00")
+    );
+
+    /* DEBUG:
+    if (!empty($estado) ) {
+        echo "<i>Hay un estado vigente para ID $idarchivocargado, fecha ingreso: ".$estado[0]->getacefechaingreso()." y fecha fin: ".$estado[0]->getacefechafin()." </i>| ";
+    } else {
+        echo "<i>NO hay estado vigente para ID $idarchivocargado</i>| ";
+    }*/
+
+    if (!empty($estado) && "0000-00-00 00:00:00" < $estado[0]->getacefechaingreso()) {
+        // Protip: En formato Y-m-d, se pueden comparar Strings como fechas, fuente: https://es.stackoverflow.com/a/254916
+        $ultimoEstado = $estado[0];
+    } else {
+        $ultimoEstado = false;
+    }
+    return $ultimoEstado;
+}
+
+/**
+ * permite averiguar si un archivo fue eliminado por borrado lógico
+ * @param int $idarchivocargado
+ * @return boolean
+ */
+public function estaHabilitado($idarchivocargado) {
+    // Obtiene el último estado vigente:
+    $ultimoEstado = $this->ultimoEstadoVigente($idarchivocargado);
+    // Si el método ultimoEstadoVigente retorna falso, quiere decir que incluso el primer estado Cargado ya venció. Posiblemente esté eliminado. Caso contrario, se evalúa el idestadotipos:
+    if ($ultimoEstado == false) {
+        $habilitado = false;
+    } else {
+        $idestadotipos = $ultimoEstado->getobjestadotipos()->getidestadotipos();
+        // Comprueba si los estados son distintos de borrado o deshabilitado:
+        $habilitado = ($idestadotipos != 3 && $idestadotipos != 4) ? true : false;
+    }
+    return $habilitado;
+}
+
+/* Versión anterior, antes de hacer ultimoEstadoVigente():
+
+public function estaHabilitado($idarchivocargado) {
+    $fechaUltimoEstado = "0000-00-00 00:00:00";
+    $ultimoDeshabilitado = "0000-00-00 00:00:00"; // date('Y-m-d H:i:s', "0000-00-00 00:00:00");
+    $habilitado = true;
+
+    // Busca el registro de estados del archivo, que tenga configurado el estado en "Eliminado":
+	$listaEstados = $this->buscar(
+        array('idarchivocargado' => $idarchivocargado)
+    );
+    foreach($listaEstados as $estado) {
+        if ($fechaUltimoEstado < $estado->getacefechaingreso() && $estado->getacefechafin() == "0000-00-00 00:00:00") {
+            // Guarda el último estado y su tipo, siempre que no sea un estado expirado (que tenga fecha fin)
+            $idestadotipos = $estado->getobjestadotipos()->getidestadotipos();
+            $fechaUltimoEstado = $estado->getacefechaingreso();
+        }
+    }
+    // Comprueba si los estados son distintos de borrado o deshabilitado:
+    $habilitado = ($idestadotipos != 3 || $idestadotipos != 4) ? true : false;
+    return $habilitado;
+}
+*/
 
 } // Fin clase abmarchivocargadoestado
 ?>

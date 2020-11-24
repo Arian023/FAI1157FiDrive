@@ -9,7 +9,7 @@ private $aclinkacceso;
 private $accantidaddescarga;
 private $accantidadusada;
 private $acfechainiciocompartir;
-private $acefechafincompartir;
+private $acefechafincompartir; // <-- En la base de datos aparece como A-C-E fechafincompartir, lo cual corresponde a archivocargadoestado 🤔
 private $acprotegidoclave;
 private $mensajeoperacion;
 
@@ -62,6 +62,7 @@ public function cargar(){
                 $usuario->setidusuario($row['idusuario']);
                 $usuario->cargar();
 
+                // Define todos los atributos del objeto archivocargado
                 $this->setear($row['idarchivocargado'], $row['acnombre'], 
                 $row['acdescripcion'], $row['acicono'], 
                 $usuario, $row['aclinkacceso'], 
@@ -76,19 +77,21 @@ public function cargar(){
     return $resp;
 }
 
-public function insertar(){
+public function insertar(){ // Ver funcionamiento de objeto en $sql: ->getidusuario()
     $resp = false;
     $base=new BaseDatos();
     // Si lleva ID Autoincrement, la consulta SQL no lleva dicho ID
-    $sql="INSERT INTO archivocargado(acnombre, acdescripcion, acicono, 
+    $sql="INSERT INTO archivocargado(idarchivocargado, acnombre, acdescripcion, acicono, 
     idusuario, aclinkacceso, accantidaddescarga, accantidadusada, 
     acfechainiciocompartir, acefechafincompartir, acprotegidoclave) VALUES('"
+        .$this->getidarchivocargado()."', '"
         .$this->getacnombre()."', '".$this->getacdescripcion()."', '"
-        .$this->getacicono()."', '".$this->getobjusuario()."', '"
+        .$this->getacicono()."', '".$this->getobjusuario()->getidusuario()."', '"
         .$this->getaclinkacceso()."', '".$this->getaccantidaddescarga()."', '"
         .$this->getaccantidadusada()."', '".$this->getacfechainiciocompartir()."', '"
         .$this->getacefechafincompartir()."', '".$this->getacprotegidoclave()."'
     );";
+    // Debug - echo "<h3>SQL: $sql </h3>";
     if ($base->Iniciar()) {
         if ($esteid = $base->Ejecutar($sql)) {
             // Si se usa ID autoincrement, descomentar lo siguiente:
@@ -110,14 +113,15 @@ public function modificar(){
         SET acnombre='".$this->getacnombre()
         ."', acdescripcion='".$this->getacdescripcion()
         ."', acicono='".$this->getacicono()
-        ."', idusuario='".$this->getobjusuario()
+        ."', idusuario='".$this->getobjusuario()->getidusuario()
         ."', aclinkacceso='".$this->getaclinkacceso()
         ."', accantidaddescarga='".$this->getaccantidaddescarga()
         ."', accantidadusada='".$this->getaccantidadusada()
         ."', acfechainiciocompartir='".$this->getacfechainiciocompartir()
-        ."', acfechainiciocompartir='".$this->getacefechafincompartir()
-        ."', acefechafincompartir='".$this->getacprotegidoclave()
+        ."', acefechafincompartir='".$this->getacefechafincompartir()
+        ."', acprotegidoclave='".$this->getacprotegidoclave()
         ."' WHERE idarchivocargado=".$this->getidarchivocargado();
+        
     if ($base->Iniciar()) {
         if ($base->Ejecutar($sql)) {
             $resp = true;

@@ -1,9 +1,14 @@
 <?php $Titulo = "Compartir archivo - FiDrive";
-include_once("../vista/estructura/cabecera.php") ?>
-<div class="card p-2 shadow-lg" id=cuerpo>
-<!-- Comienzo div cuerpo-->
-<div class="jumbotron jumbotron-fluid p-2 m-auto">
-	<!-- Comienzo div consigna -->
+include_once("../../vista/estructura/cabecera.php");
+// Llama a los ABM de archivos cargados y de usuario:
+$AbmArchivoCargado = new abmarchivocargado();
+$AbmUsuario = new abmusuario();
+// Si recibe un ID de archivo por parámetro (opción modificar), busca sus atributos para completar formulario:
+if (isset($_GET['id']) ) 
+	$archivoSelec = $AbmArchivoCargado->buscar( array('idarchivocargado'=>$_GET['id']) );
+?>
+<div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
+<div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Compartir archivo</h1>
 	<hr class="my-2">
 	<p class="lead">Creamos el archivo compartirarchivo.php para compartir un archivos. Este archivo debe incluir los archivos: cabecera.php, pie.php y menu.php
@@ -39,22 +44,28 @@ include_once("../vista/estructura/cabecera.php") ?>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
 	<h4 class="text-md-center"><i class="fas fa-share-alt-square mx-2"></i>Opciones para compartir:</h4>
-	<form class="validarClave" name=compartir id=compartir method=post novalidate>
+	<form class="validarClave" name=compartir id=compartir method=post  novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
-				<label for="nombre" class="font-weight-bold">Nombre del archivo a compartir</label>
+				<label for="nombre" class="font-weight-bold">Título del archivo a compartir</label>
 				<div class="input-group">
 					<div class="input-group-prepend">
 						<span class="input-group-text"><i class="fas fa-tag"></i></span>
 					</div>
 					<input type=text class=form-control name=nombre id=nombre readonly 
-					<?php if (isset($_GET['nombre']) ) {
-						echo 'value="'.$_GET['nombre'].'"';
-					} else { 
-						echo 'value="1234.png"';
-					} ?> >
+					value=<?php 
+							if ( isset($archivoSelec[0]) ) 
+								echo '"'.$archivoSelec[0]->getacnombre().'"';
+							else
+								echo "1234.png";
+						?> >
 					<input type=hidden name=ruta id=ruta 
-						<?php if (isset($_GET['ruta']) ) echo 'value="'.$_GET['ruta'].'"'?> >
+						value=<?php 
+							if ( isset($archivoSelec[0]) ) 
+								echo '"'.$archivoSelec[0]->getaclinkacceso().'"';
+							else
+								echo "1234.png";
+						?> >
 				</div>
 			</div>
 			<div class="form-group col-md-6">
@@ -65,9 +76,14 @@ include_once("../vista/estructura/cabecera.php") ?>
 					</div>
 					<select class=form-control name=usuario id=usuario>
 						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
-						<option value=admin>Administrador</option>
-						<option value=visitante>Visitante</option>
-						<option value=usted>Usted</option>
+						<?php // Lee los usuarios de la base de datos, y completa las opciones:
+						$listaUsuario = $AbmUsuario->buscar(null);
+						if(!empty($listaUsuario)){
+							foreach ($listaUsuario as $clave=>$usuario) {
+								echo '<option value='.$usuario->getidusuario().'>'
+									.$usuario->getusnombre().'</option>';
+							}
+						}?>
 					</select>
 				</div>
 			</div>
@@ -103,7 +119,7 @@ include_once("../vista/estructura/cabecera.php") ?>
 					<div class="validarClave__bar progress-bar bg-danger" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 				</div>
 				<!-- Carga script para validar fuerza de contraseña -->
-				<!-- Nota: Cargarlo en pie.php da error en consola si se abre otros sitios que no lo usan -->
+				<!-- Nota: Cargarlo en pie.php da error en consola si se ejecuta en otros sitios que no lo usan -->
 				<script src="../vista/js/validarClave.js"></script>
 				<script type="text/javascript">
 					// Deshabilitar o habilitar campo clave - Fuente: https://stackoverflow.com/a/15140254
@@ -121,12 +137,7 @@ include_once("../vista/estructura/cabecera.php") ?>
 		</div>
 		<div class="form-row">
 			<div class="form-group col-md-6">
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<span class="input-group-text"><i class="fas fa-link"></i></span>
-					</div>
-					<input type=text class=form-control name=enlace id=enlace readonly placeholder="Aquí aparece el enlace...">
-				</div>
+				<input type=hidden name=enlace id=enlace> <!--- Se genera enlace por JS --->
 			</div>
 			<div class="form-group col-md-6">
 				<label for="enlace" class="font-weight-bold"></label>
@@ -138,8 +149,10 @@ include_once("../vista/estructura/cabecera.php") ?>
 
 <hr>
 <div class=row>
-	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
-	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../index/index.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
 </div>
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

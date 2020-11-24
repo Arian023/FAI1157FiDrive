@@ -3,7 +3,7 @@ class control_archivos {
     // Nota: Este control trabaja con archivos ubicados en una subcarpeta de donde se encuentra la página web invocada
     // Ejemplo: Sitio en ../vista/index.php, archivo en ../vista/archivos/ejemplo.txt 
 
-private $dir = "../archivos/"; // Carpeta por defecto
+private $dir = "../../archivos/"; // Carpeta por defecto
 private $phpFileUploadErrors = array(
     0 => 'There is no error, the file uploaded with success',
     1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
@@ -70,17 +70,14 @@ public function guardarComo($archivo, $datosIng) {
     /* Procedimiento de guardado - CUARTA ENTREGA
      * @param Array $Archivo Trae los datos del archivo a cargar (ej: $_FILES['archivoIng'])
      * @param Array $datosIng Trae información del formulario (ej: $_POST)
-     * @return int $codError El resultado del copiado (0 = éxito, 1 = error copia, 2 y 3 = error BD)
+     * @return int $codError El resultado del copiado (0 = éxito, 1 = error archivocargado, 2, 3 y 4 = error archivocargadoestado)
      */
 
     // Llama a los ABM para crear objetos y cargar los datos:
-    $AbmUsuario = new abmusuario();
-    $AbmArchivoCargado = new abmarchivocargado();
-    $AbmTipo = new abmestadotipos();
+    $AbmCargado = new abmarchivocargado();
     $AbmEstado = new abmarchivocargadoestado();
 
     // Toma los valores para cargar en la base de datos
-    $objUsuario = $AbmUsuario->buscar( array('idusuario',$datosIng['usuario']) );
     switch($datosIng['icono']) {
         case "img": $acicono = "fas fa-file-image";
             break;
@@ -97,43 +94,46 @@ public function guardarComo($archivo, $datosIng) {
         }
     // Prepara arreglo de parámetros para el alta en tabla archivocargado:
     $datosArchivo = array(
-        "idarchivocargado" => null,
+        "idarchivocargado" => null, // Autoincrement
         "acnombre" => $datosIng['acnombre'],
         "acdescripcion" => $datosIng['acdescripcion'],
         "acicono" => $acicono,
-        "idusuario" => $objUsuario[0],
+        "idusuario" => $datosIng['usuario'],
         "aclinkacceso" => $this->dir.$archivo['name'],
         "accantidaddescarga" => 0,
         "accantidadusada" => 0,
         "acfechainiciocompartir" => null,
         "acfechafincompartir" => null,
-        "acprotegidoclave" => null,
+        "acprotegidoclave" => null
     );
 
-    if( $AbmArchivoCargado->alta($datosArchivo) ){ // <<---- NO FUNCIONA: "Object of class usuario could not be converted to string"
+    if( $AbmCargado->alta($datosArchivo) ){
         // Se obtiene instancia de objeto archivo, aprovechando los mismos datos para el alta:
-        $objArchivocargado = $AbmArchivoCargado->buscar($datosArchivo);
-
-        $objEstadoTipo = $AbmTipo->buscar( array('idestadotipo'=>1) );
+        $objArchivocargado = $AbmCargado->buscar($datosArchivo);
+        
         // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
         $datosEstado = array(
-            "idestadotipos " => $objEstadoTipo[0], // "Cargado"
-            "acedescripcion" => "Cargado en el servidor por ".$objUsuario[0]->getuslogin()." el día ".date("d/m/Y"),
-            "idusuario" => $objUsuario[0],
-            "idarchivocargado" => $objArchivocargado[0],
+            "idarchivocargadoestado" => null, // Autoincrement
+            "idestadotipos" => 1, // "Cargado"
+            "acedescripcion" => "Cargado por usuario #".$datosIng['usuario']." el día ".date("d/m/Y"),
+            "idusuario" => $datosIng['usuario'],
+            "acefechaingreso" => date('Y-m-d H:i:s'), // Fecha y hora actual
+            "acefechafin" => null,
+            "idarchivocargado" => $objArchivocargado[0]->getidarchivocargado()
         );
-        if ($AbmEstado->alta($datosEstado)) { 
+        
+        if ( $AbmEstado->alta($datosEstado) ) { 
             // Si se pudo cargar en la BD, realiza el proceso de copiado:
             $copiado = copy($archivo['tmp_name'], $this->dir.$archivo['name']);
             if ($copiado) {
                 // Si copió a la carpeta de archivos y se registró en BD con éxito:
                 $codError = 0;
             } else {
-                // Si no se pudo copiar, cancela registro:
+                // Si no se pudo copiar:
                 $codError = 1;
-                $AbmArchivoCargado->baja($datosArchivo);
-                $AbmEstado->baja($datosEstado);
-                /* Nota: Desconozco cómo realizar la "transacción" para que sea más transparente que realice los ambos pasos 
+                // $AbmCargado->baja( array('idarchivocargado' => $objArchivocargado[0]->getidarchivocargado()) );
+                // $AbmEstado->baja($datosEstado);
+                /* Nota: Desconozco cómo realizar la "transacción" para que sea más transparente que realice ambos pasos 
                 (cargar en dos tablas y realizar la copia), sin tener que estar borrando en caso que falle. 
                 No es un manejo de errores exhaustivo. También se podría invertir el procedimiento, 
                 primero copiando el archivo temporal al servidor y luego cargando en la BD, pero se presenta la misma situación.
@@ -142,6 +142,7 @@ public function guardarComo($archivo, $datosIng) {
         } else {
             // Si no se pudo cargar el estado en la BD:
             $codError = 3;
+            // $AbmCargado->baja( array('idarchivocargado' => $objArchivocargado[0]->getidarchivocargado()) );
         }
     } else {
         // Si no se pudo cargar datos en la BD:
@@ -210,29 +211,14 @@ public function crearCarpeta($ruta, $nombre) {
 public function modificar($datosIng) {
     /* Procedimiento de modificación - CUARTA ENTREGA
      * @param Array $datosIng Trae información del formulario (ej: $_POST)
-     * @return boolean El resultado de la modificación
+     * @return int $codError El resultado de la modificación (0 = éxito, 1 = error copia, 2 y 3 = error BD)
      */
 
     // Llama a los ABM para crear objetos y cargar los datos:
-    $AbmUsuario = new abmusuario();
-    $AbmArchivoCargado = new abmarchivocargado();
-    $AbmTipo = new abmestadotipos();
+    $AbmCargado = new abmarchivocargado();
     $AbmEstado = new abmarchivocargadoestado();
-    
-    $acnombre = $datosIng['acnombre'];
-    $acdescripcion = $datosIng['acdescripcion'];
 
-    // Toma los valores para cargar en la base de datos
-    $acnombre = $datosIng['acnombre'];
-    $acdescripcion = $datosIng['acdescripcion'];
-
-    // Se obtiene instancia de objeto usuario según su ID:
-    $objUsuario = $AbmUsuario->buscar( array('idusuario'=>$datosIng['usuario']) );
-    /* NOTA: En uso real no tiene sentido seleccionar usuario al cargar archivo 
-    (siendo un login que se realiza antes), pero como es una opción del formulario, 
-    se permite modificar usuario al que pertenece.
-    */
-    switch($datosIng['acicono']) {
+    switch($datosIng['icono']) {
         case "img": $acicono = "fas fa-file-image";
             break;
         case "zip": $acicono = "fas fa-file-archive";
@@ -247,42 +233,128 @@ public function modificar($datosIng) {
             break;
         }
 
-    // Prepara arreglo de parámetros para el alta en tabla archivocargado:
+    // Para evitar setear demás datos a null, se busca el registro a modificar, y se cargan los datos para mantenerlos:
+    $objArchivocargado = $AbmCargado->buscar( array("idarchivocargado" => $datosIng['idarchivocargado']) );
+
+    /* NOTA: En uso real no tiene sentido seleccionar usuario al cargar archivo 
+    (siendo un login que se realiza antes), pero como es una opción del formulario, 
+    se permite modificar usuario al que pertenece el archivo.
+
+    Agrego: Al integrar login, el campo usuario debe ser hidden o tomado de $_SESSION
+    */
+    // Prepara arreglo de parámetros para la modificación en tabla archivocargado:
     $datosModArchivo = array(
-        "idarchivocargado" => $datosIng['idarchivo'],
-        "acnombre" => $acnombre,
-        "acdescripcion" => $acdescripcion,
-        "objusuario" => $objUsuario[0],
-        "acicono" => $acicono
+        "idarchivocargado" => $datosIng['idarchivocargado'],
+        "acnombre" => $datosIng['acnombre'],
+        "acdescripcion" => $datosIng['acdescripcion'],
+        "acicono" => $acicono,
+        "idusuario" => $datosIng['usuario'],
+        "aclinkacceso" => $objArchivocargado[0]->getaclinkacceso(),
+        "accantidaddescarga" => $objArchivocargado[0]->getaccantidaddescarga(),
+        "accantidadusada" => $objArchivocargado[0]->getaccantidadusada(),
+        "acfechainiciocompartir" => $objArchivocargado[0]->getacfechainiciocompartir(),
+        "acefechafincompartir" => $objArchivocargado[0]->getacefechafincompartir(),
+        "acprotegidoclave" => $objArchivocargado[0]->getacprotegidoclave()
     );
 
-
-    if ($AbmArchivoCargado->modificacion($datosModArchivo)) {
+    if ($AbmCargado->modificacion($datosModArchivo)) {
         // Se obtiene instancia de objeto archivo, ahora modificado
-        $objArchivocargado = $AbmArchivoCargado->buscar($datosModArchivo);
 
-        // Se obtiene instancia de objeto estadotipo según su ID (1 corresponde a 'Cargado'):
-        $objEstadoTipo = $AbmTipo->buscar( array('idestadotipos'=>1) );
         // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
         $datosModEstado = array(
-            "objestadotipos " => $objEstadoTipo[0],
-            "acedescripcion" => "Modificado en el servidor por ".$objUsuario[0]->getuslogin()." el día ".date("d/m/Y"),
-            "objusuario" => $objUsuario[0],
-            "objarchivocargado" => $objArchivocargado[0],
+            "idarchivocargadoestado" => null, // Autoincrement
+            "idestadotipos" => 1,
+            "acedescripcion" => "Modificado por usuario #".$datosIng['usuario']." el día ".date("d/m/Y"),
+            "idusuario" => $datosIng['usuario'],
+            "acefechaingreso" => date('Y-m-d H:i:s'), // Fecha y hora actual
+            "acefechafin" => null,
+            "idarchivocargado" => $datosIng['idarchivocargado'],
         );
 
-        // Se obtiene lista de estados cargados - MODIFICAR ESTADO: FECHA FIN ULTIMO ESTADO
-        $listaEstados = $AbmEstado->buscar($datosModArchivo);
+        // Se obtiene el objeto del último estado activo para setear fecha fin:
+        $ultimoEstado = $AbmEstado->ultimoEstadoVigente($datosIng['idarchivocargado']);
 
-        $cargado = $AbmEstado->alta($datosModEstado);
+        if (! $ultimoEstado===false) {
+            $ultimoEstado->setacefechafin( date('Y-m-d H:i:s') );
+            $ultimoEstado->modificar();
+        }
+        // Carga nuevo estado modificado:
+        if ( $AbmEstado->alta($datosModEstado) ) {
+            // Si pudo cargar el nuevo estado y modificar todo lo demás:
+            $codError = 0;
+        } else {
+            // Si no pudo cargar nuevo estado:
+            $codError = 2;
+        }
     } else {
-        $cargado = false;
+        // Si no pudo modificar el archivocargado:
+        $codError = 1;
     }
+    return $codError;
+}
 
-    
+public function compartir($datosIng) {
+    /* Procedimiento para compartir - CUARTA ENTREGA
+     * @param Array $datosIng Trae información del formulario (ej: $_POST)
+     * @return int $codError El resultado de la operación (0 = éxito, 1 = error copia, 2 y 3 = error BD)
+     */
 
-    // Realiza modificación y retorna true/false según éxito en la operación:
-    return $cargado;
+    // Llama a los ABM para crear objetos y cargar los datos:
+    $AbmCargado = new abmarchivocargado();
+    $AbmEstado = new abmarchivocargadoestado();
+
+    // Se busca el registro a modificar, y se cargan los datos para mantenerlos:
+    $objArchivocargado = $AbmCargado->buscar( array("idarchivocargado" => $datosIng['idarchivocargado']) );
+
+    // Prepara arreglo de parámetros para la modificación en tabla archivocargado:
+    $datosModArchivo = array(
+        "idarchivocargado" => $datosIng['idarchivocargado'],
+        "acnombre" => $objArchivocargado[0]->getacnombre(),
+        "acdescripcion" => $objArchivocargado[0]->getacdescripcion(),
+        "acicono" => $objArchivocargado[0]->getacicono(),
+        "idusuario" => $datosIng['usuario'],
+        "aclinkacceso" => $objArchivocargado[0]->getaclinkacceso(),
+        "accantidaddescarga" => $datosIng['accantidaddescarga'],
+        "accantidadusada" => $datosIng['accantidadusada'],
+        "acfechainiciocompartir" => date("Y-m-d H:i:s"),
+        "acefechafincompartir" => date("Y-m-d H:i:s", strtotime( date("Y-m-d H:i:s")." + ".$datosIng['cantDias']." days") ),
+        "acprotegidoclave" => $datosIng['acprotegidoclave']
+    );
+
+    if ($AbmCargado->modificacion($datosModArchivo)) {
+        // Se obtiene instancia de objeto archivo, ahora modificado
+
+        // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
+        $datosModEstado = array(
+            "idarchivocargadoestado" => null, // Autoincrement
+            "idestadotipos" => 2, // Compartido
+            "acedescripcion" => "Compartido por usuario #".$datosIng['usuario']." el día ".date("d/m/Y"),
+            "idusuario" => $datosIng['usuario'],
+            "acefechaingreso" => date('Y-m-d H:i:s'), // Fecha y hora actual
+            "acefechafin" => null,
+            "idarchivocargado" => $datosIng['idarchivocargado'],
+        );
+
+        // Se obtiene el objeto del último estado activo para setear fecha fin:
+        $ultimoEstado = $AbmEstado->ultimoEstadoVigente($datosIng['idarchivocargado']);
+
+        if (! $ultimoEstado===false) {
+            $ultimoEstado->setacefechafin( date('Y-m-d H:i:s') );
+            $ultimoEstado->modificar();
+        }
+        // Carga nuevo estado modificado:
+        if ( $AbmEstado->alta($datosModEstado) ) {
+            // Si pudo cargar el nuevo estado y modificar todo lo demás:
+            $codError = 0;
+        } else {
+            // Si no pudo cargar nuevo estado:
+            $codError = 2;
+        }
+    } else {
+        // Si no pudo modificar el archivocargado:
+        $codError = 1;
+    }
+    return $codError;
 }
 
 public function noCompartir($ruta, $nom, $motivo) {
@@ -295,8 +367,8 @@ public function noCompartir($ruta, $nom, $motivo) {
     return true;
 }
 
-public function borrar($ruta, $nom) {
-    /* Procedimiento de borrado - NO BORRA ENTRADA EN BASE DE DATOS AÚN (titulo, icono, descripción)
+public function borrarEn($ruta, $nom) {
+    /* Procedimiento de borrado - NO BORRA ENTRADA EN BASE DE DATOS (titulo, icono, descripción)
      * @param String $ruta Indica la ruta del archivo a borrar (ej: '../archivos/')
      * @param String $nom Nombre del archivo (ej: 'imagen.jpg')
      * @return int $codError Un número según el error presentado
@@ -312,6 +384,44 @@ public function borrar($ruta, $nom) {
     // Hace operación de borrado, pero si el mismo retorna falso, devuelve error 4
     if ($codError==0 && !unlink($ruta.$nom) ) $codError = 4;
 
+    return $codError;
+}
+
+public function borrar($datosIng) {
+    /* Procedimiento de borrado - CUARTA ENTREGA
+     * @param Array $datosIng Trae información del formulario (ej: $_POST)
+     * @return boolean $codError El resultado de la operación
+     */
+    
+    // Llama a los ABM para crear objetos y cargar los datos:
+    $AbmEstado = new abmarchivocargadoestado();
+
+    // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
+    $datosEstado = array(
+        "idarchivocargadoestado" => null, // Autoincrement
+        "idestadotipos" => 4, // "Eliminado"
+        "acedescripcion" => $datosIng['acdescripcion'],
+        "idusuario" => $datosIng['usuario'],
+        "acefechaingreso" => date('Y-m-d H:i:s'), // Fecha y hora actual
+        "acefechafin" => null,
+        "idarchivocargado" => $datosIng['idarchivocargado']
+    );
+
+    // Se obtiene el objeto del último estado activo para setear fecha fin:
+    $ultimoEstado = $AbmEstado->ultimoEstadoVigente($datosIng['idarchivocargado']);
+
+    if (! $ultimoEstado===false) {
+        $ultimoEstado->setacefechafin( date('Y-m-d H:i:s') );
+        $ultimoEstado->modificar();
+    }
+    // Carga nuevo estado borrado:
+    if ( $AbmEstado->alta($datosEstado) ) {
+        // Si pudo cargar el nuevo estado y modificar todo lo demás:
+        $codError = true;
+    } else {
+        // Si no pudo cargar nuevo estado:
+        $codError = false;
+    }
     return $codError;
 }
 

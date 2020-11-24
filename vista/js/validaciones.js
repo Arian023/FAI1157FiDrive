@@ -84,6 +84,9 @@ $('#amarchivo').bootstrapValidator({
         }
     }
 });
+$(document).ready(function () {
+    $('#amarchivo').confirmarSalir('');
+});
 
 function elegirIcono() {
     // Lee el nombre del archivo elegido (antes de ser enviado) y marca automáticamente el ícono sugerido
@@ -150,28 +153,31 @@ $('#compartir').bootstrapValidator({
         }
     }
 });
+$(document).ready(function () {
+    $('#compartir').confirmarSalir('');
+});
 
 function generarLink() {
     /* @see Utiliza método encontrado en: https://debugpointer.com/create-md5-hash-in-javascript/
      * Toma los datos del formulario y genera un enlace con un hash md5 mostrado en el último campo del formulario
      */
-    var nombre = document.getElementById("nombre").value;
+    // Ya no es necesario al tomar nombre desde ruta: var nombre = document.getElementById("nombre").value;
     var ruta = document.getElementById("ruta").value;
     var cantDias = document.getElementById("cantDias").value;
     var cantDescargas = document.getElementById("cantDescargas").value;
     var fechaHoraActual = new Date();
 
-    // Recorto dos puntos y barra ( ../ ) para obtener una ruta correcta
-    ruta = ruta.substring(3);
+    // Recorto los puntos y barras ( ../../ ) de ruta relativa, para obtener una ruta absoluta correcta
+    ruta = ruta.substring(6);
 
     // Si la cantidad de días compartidos o la de descarga son nulas, el hash debe ser un número fijo
     // Nota: Buscar mejor forma de obtener ruta actual del proyecto, se asume carpeta mencionada a continuación
     if ( cantDias == 0 || cantDescargas == 0) {
-        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+nombre+"?compartido="+9007199254740991;
+        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+"?compartido="+9007199254740991;
     } else {
         // Se genera hash usando fecha y hora actual, asumiendo que no se generará el mismo hash en otro día con los mismos cantDias y cantDescargas
         var hash = md5(fechaHoraActual+cantDias+cantDescargas);
-        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+nombre+"?compartido="+hash;
+        document.getElementById("enlace").value = "http://localhost/FAI1157FiDrive/"+ruta+"?compartido="+hash;
     }
 }
 
@@ -206,6 +212,9 @@ $('#nocompartir').bootstrapValidator({
         }
     }
 });
+$(document).ready(function () {
+    $('#nocompartir').confirmarSalir('');
+});
 
 // --- Eliminar archivo: ---
 $('#eliminar').bootstrapValidator({
@@ -237,6 +246,9 @@ $('#eliminar').bootstrapValidator({
         }
         }
     }
+});
+$(document).ready(function () {
+    $('#eliminar').confirmarSalir('');
 });
 
 // --- Ver contenido: ---

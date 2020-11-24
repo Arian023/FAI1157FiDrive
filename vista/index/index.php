@@ -1,5 +1,5 @@
 <?php $Titulo = "Inicio - FiDrive"; 
-include_once("../vista/estructura/cabecera.php")?>
+include_once("../../vista/estructura/cabecera.php")?>
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">FiDrive - Bienvenido al sitio</h1>
@@ -11,25 +11,23 @@ include_once("../vista/estructura/cabecera.php")?>
 	<h3 class="lead"><b>Funcionalidades y detalles:</b></h3>
 	<ul>
 		<li>Listado de archivos con funciones de compartir/modificar/eliminar</li>
-		<li>Íconos mostrados según extensión de archivo o carpeta <small>(aún no lee icono seleccionado por usuario)</small></li>
-		<li>Crear carpeta y navegar por subcarpetas <small>(no permite cambiar nombre o borrar)</small></li>
+		<li>Íconos mostrados según ingresados por el usuario <small>(en entrega 3 por extensión de archivo)</small></li>
+		<li>Crear carpeta y navegar por subcarpetas <small>(en entrega 3)</small></li>
 		<li>Animación al pasar cursor por cada caja de icono</li>
 		<li>Botón de "Volver arriba" al navegar por páginas largas <small>(aparece flotando en la esquina inferior derecha)</small></li>
 		<li>Buscador de palabras en el mismo sitio <small>(integrado a la barra de navegación)</small></li>
-		<li>Plugins de formularios para generar texto enriquecido y validar fortaleza de contraseña</li>
-		<li>Sitio web mayormente responsive y visualmente organizado <small>(excepto detalles para centrar cajas)</small></li>
-		<li>Navegación en barra superior y mapa del sitio a continuación <small>(Nuevo archivo carga en carpeta raíz, demás opciones accesibles directamente a modo ilustrativo)</small></li>
+		<li>Plugins de formularios para generar texto enriquecido, validar fortaleza de contraseña y confirmar salir sin enviar</li>
+		<li>Sitio web mayormente responsive y visualmente organizado</li>
+		<li>Navegación en barra superior y mapa del sitio a continuación <small>(Demás opciones accesibles directamente a modo ilustrativo)</small></li>
 	</ul>
 </div> <!-- Fin div consigna -->
 
 <div class="alert alert-warning alert-dismissible fade show my-2" role='alert'>
-	Cuarta entrega en: <a href="https://github.com/Arian023/FAI1157FiDrive/">https://github.com/Arian023/FAI1157FiDrive</a><br><br>
-	<b>Entrega incompleta 29/10:</b> <br>
+	Publicado en: <a href="https://github.com/Arian023/FAI1157FiDrive/">https://github.com/Arian023/FAI1157FiDrive</a><br><br>
+	<b>Pendientes 23/11:</b> <br>
 	<ul>
-		<li>amarchivo.php no funciona el alta y aún no se probó modificación</li>
-		<li>contenido.php fue actualizado con funcionalidad de ver detalles en modal (ventana flotante), pero no se pudo probar funcionamiento</li>
-		<li>Pendiente realizar la funcionalidad de compartir, borrar y mostrar compartidos</li>
-		<li>Pendiente reorganizar estructura de ../vista/ en subcarpetas para formularios y action</li>
+		<li>Gestionar link compartido y dejar de compartir</li>
+		<li>Integrar login del usuario</li>
 	</ul>
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 	<span aria-hidden="true">&times;</span></button>
@@ -55,4 +53,4 @@ include_once("../vista/estructura/cabecera.php")?>
 </div> <!-- Fin div mapa -->
 
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

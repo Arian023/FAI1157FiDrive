@@ -1,5 +1,5 @@
 <?php $Titulo = "Dejar de compartir archivo - FiDrive"; 
-include_once("../vista/estructura/cabecera.php")?>
+include_once("../../vista/estructura/cabecera.php")?>
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 
 <div class="container p-2" id=formulario> <!-- Comienzo div contenido -->
@@ -38,10 +38,10 @@ include_once("../vista/estructura/cabecera.php")?>
 
 <hr>
 <div class=row>
-	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block">
+	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
-	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block">
+	<div class=col><a href="../index/index.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
 </div>
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

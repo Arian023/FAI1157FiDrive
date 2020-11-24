@@ -1,5 +1,5 @@
 <?php $Titulo = "Alta o modificación - FiDrive"; 
-include_once("../vista/estructura/cabecera.php");
+include_once("../../vista/estructura/cabecera.php");
 // Llama a los ABM de archivos cargados y de usuario:
 $AbmArchivoCargado = new abmarchivocargado();
 $AbmUsuario = new abmusuario();
@@ -36,14 +36,8 @@ if (isset($_GET['id']) )
 <hr>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
-<div class="alert alert-warning alert-dismissible fade show my-2" role='alert'>
-	<b>Incompleto:</b> Formulario y acción actualizados, pero aún no funciona acción de alta (<small>ver guardarComo() en control_archivos.php</small>) ni está completo el de modificación.
-	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-	<span aria-hidden="true">&times;</span>
-	</button>
-</div>
 	<h4 class="text-md-center"><i class="fas fa-upload mx-2"></i>Ingrese los siguientes datos para <?= empty($modificar) ? "cargar" : "modificar" ?> el archivo:</h4>
-	<form name=amarchivo id=amarchivo method=post action="carga.php" enctype="multipart/form-data" novalidate>
+	<form name=amarchivo id=amarchivo method=post action="../action/carga.php" enctype="multipart/form-data" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label for="titulo" class="font-weight-bold">Título del archivo</label>
@@ -54,7 +48,7 @@ if (isset($_GET['id']) )
 					<input type=text class=form-control name=acnombre id=titulo 
 						value= <?php 
 							if ( isset($archivoSelec[0]) ) 
-								echo $archivoSelec[0]->getacnombre();
+								echo "'".$archivoSelec[0]->getacnombre()."'";
 							else
 								echo "1234.png";
 						?> >
@@ -65,7 +59,7 @@ if (isset($_GET['id']) )
 				<?php // Puedo mostrar un campo de texto ilustrativo sobre el archivo seleccionado, en lugar de botón de carga
 				if ( isset($archivoSelec[0]) )  {
 					echo "<input type=text class='form-control' name=archivoIng id=archivoIng 
-						value='".$archivoSelec[0]->getaclinkacceso()."' readonly>"; 
+						value='".$archivoSelec[0]->getaclinkacceso()."' readonly>";
 				} else {
 					echo "<input type=file class=form-control name=archivoIng id=archivoIng onchange=elegirIcono()>
 						<!-- Corre método para marcar icono sugerido según extensión de archivo -->";
@@ -94,7 +88,7 @@ if (isset($_GET['id']) )
                     </div>
 					<select class=form-control name=usuario id=usuario>
 						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
-						<?php
+						<?php // Lee los usuarios de la base de datos, y completa las opciones:
 						$listaUsuario = $AbmUsuario->buscar(null);
 						if(!empty($listaUsuario)){
 							foreach ($listaUsuario as $clave=>$usuario) {
@@ -107,7 +101,7 @@ if (isset($_GET['id']) )
 			</div>
 			<div class="form-group col-md-6">
 				<!-- Hace un echo del valor de ID y mod que recibe desde contenido.php -->
-				<input type=hidden class=form-control name=idarchivo id=idarchivo 
+				<input type=hidden class=form-control name=idarchivocargado id=idarchivocargado 
 					<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
 				<input type=hidden class=form-control name=mod id=mod 
 					<?php if (isset($_GET['mod']) ) echo 'value="'.$_GET['mod'].'"'?> >
@@ -127,28 +121,28 @@ if (isset($_GET['id']) )
 				<div class="flex-row-reverse">
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" name=icono id=img type=radio value=img>
-						<i class="fas fa-file-image mx-2"></i>
-						<label for=atp class="form-check-label">Imagen</label>
+						<label for=img class="form-check-label">
+						<i class="fas fa-file-image mx-2"></i>Imagen</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" name=icono id=zip type=radio value=zip>
-						<i class="fas fa-file-archive mx-2"></i>
-						<label for=m7 class="form-check-label">Comprimido</label>
+						<label for=zip class="form-check-label">
+						<i class="fas fa-file-archive mx-2"></i>Comprimido</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" name=icono id=doc type=radio value=doc>
-						<i class="fas fa-file-word mx-2"></i>
-						<label for=m18 class="form-check-label">Documento de texto</label>
+						<label for=doc class="form-check-label">
+						<i class="fas fa-file-word mx-2"></i>Documento de texto</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" name=icono id=pdf type=radio value=pdf>
-						<i class="fas fa-file-pdf mx-2"></i>
-						<label for=m18 class="form-check-label">Libro PDF</label>
+						<label for=pdf class="form-check-label">
+						<i class="fas fa-file-pdf mx-2"></i>Libro PDF</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" name=icono id=xls type=radio value=xls>
-						<i class="fas fa-file-excel mx-2"></i>
-						<label for=m18 class="form-check-label">Planilla de cálculo</label>
+						<label for=xls class="form-check-label">
+						<i class="fas fa-file-excel mx-2"></i>Planilla de cálculo</label>
 					</div>
 				</div>
 			</div>
@@ -165,8 +159,10 @@ if (isset($_GET['id']) )
 
 <hr>
 <div class=row>
-	<div class=col><a href="../vista/contenido.php" class="btn btn-outline-dark btn-block"><i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
-	<div class=col><a href="../vista/index.php" class="btn btn-outline-dark btn-block"><i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
+	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>
+	<div class=col><a href="../index/index.php" class="btn btn-outline-dark btn-block">
+		<i class='fas fa-home mx-2'></i>Volver al Inicio</a></div>
 </div>
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

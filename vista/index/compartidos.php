@@ -1,5 +1,5 @@
 <?php $Titulo = "Ver archivos compartidos - FiDrive"; 
-include_once("../vista/estructura/cabecera.php");
+include_once("../../vista/estructura/cabecera.php");
 // Llama al objeto con métodos para manejar carga de archivos:
 $control = new control_archivos();
 
@@ -94,6 +94,6 @@ if (empty($_GET)) {
 </div> <!-- Fin div contenido -->
 
 <hr>
-<a href="../vista/index.php" class="btn btn-outline-dark"><i class='fas fa-home mx-2'></i>Volver al inicio</a>
+<a href="../index/index.php" class="btn btn-outline-dark"><i class='fas fa-home mx-2'></i>Volver al inicio</a>
 </div> <!-- Fin div cuerpo -->
-<?php include_once("../vista/estructura/pie.php"); ?>
+<?php include_once("../../vista/estructura/pie.php"); ?>

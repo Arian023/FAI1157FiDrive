@@ -8,7 +8,7 @@ class abmusuario{
  * @return usuario
  */
 private function cargarObjeto($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( array_key_exists('idusuario',$param) &&
         array_key_exists('usnombre',$param) &&
         array_key_exists('usapellido',$param) &&
@@ -16,12 +16,12 @@ private function cargarObjeto($param){
         array_key_exists('usclave',$param) &&
         array_key_exists('usactivo',$param)
     ){
-        $obj = new usuario();
-        $obj->setear($param['idusuario'], $param['usnombre'], 
+        $nuevoObjeto = new usuario();
+        $nuevoObjeto->setear($param['idusuario'], $param['usnombre'], 
             $param['usapellido'], $param['uslogin'], 
             $param['usclave'], $param['usactivo']);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -31,12 +31,12 @@ private function cargarObjeto($param){
  * @return usuario
  */
 private function cargarObjetoConClave($param){
-    $obj = null;
+    $nuevoObjeto = null;
     if( isset($param['idusuario']) ){
-        $obj = new usuario();
-        $obj->setear($param['idusuario'], null, null, null, null, null);
+        $nuevoObjeto = new usuario();
+        $nuevoObjeto->setear($param['idusuario'], null, null, null, null, null);
     }
-    return $obj;
+    return $nuevoObjeto;
 }
 
 /**
@@ -90,7 +90,7 @@ public function baja($param){
  */
 public function modificacion($param){
     // echo "<i>**Realizando la modificación**</i>";
-    var_dump($param);
+    echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
         $Objusuario = $this->cargarObjeto($param);
