@@ -29,10 +29,10 @@ if ( empty($datosIng) ) {
 
 	<div class="container-md">
 		<?= $mensaje ?>
-	</div> <!-- Fin div archivos mostrados -->
+	</div> <!-- Fin div mensaje -->
 </div> <!-- Fin div contenido -->
 
-<hr>
+<hr class=my-4>
 <div class=row>
 	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>

@@ -161,9 +161,13 @@ public function ultimoEstadoVigente($idarchivocargado) {
         echo "<i>NO hay estado vigente para ID $idarchivocargado</i>| ";
     }*/
 
+    /* Se asume que solo habrá un único registro con fecha fin en cero, 
+     * ya que en cada llamado a la tabla abmarchivocargadoestado, 
+     * se setea la fecha fin de cada registro anterior y se abre uno nuevo en cero.
+     */
     if (!empty($estado) && "0000-00-00 00:00:00" < $estado[0]->getacefechaingreso()) {
         // Protip: En formato Y-m-d, se pueden comparar Strings como fechas, fuente: https://es.stackoverflow.com/a/254916
-        $ultimoEstado = $estado[0];
+        $ultimoEstado = end($estado);
     } else {
         $ultimoEstado = false;
     }
@@ -173,7 +177,7 @@ public function ultimoEstadoVigente($idarchivocargado) {
 /**
  * permite averiguar si un archivo fue eliminado por borrado lógico
  * @param int $idarchivocargado
- * @return boolean
+ * @return boolean $habilitado
  */
 public function estaHabilitado($idarchivocargado) {
     // Obtiene el último estado vigente:

@@ -182,6 +182,9 @@
 			font-family: sans-serif;
 			font-size: 13px;
 			color: #000000;
+
+			background:lightblue url(vista/img/fondo.jpg) fixed center;
+    		/* Fuente del fondo: https://www.pexels.com/photo/abstract-art-artistic-background-1103970/ */
 		}
 		
 		#wrapper {
@@ -189,6 +192,12 @@
 			*width: 600px;
 			margin: 0 auto;
 			text-align: left;
+
+			/* Estilo agregado */
+			background: rgba(233, 236, 239, 0.8);
+			border: 1px solid #999;
+			border-radius: 10px;
+			padding: 10px;
 		}
 		
 		body#left {
@@ -210,7 +219,7 @@
 			font-size: 14px;
 			padding: 0 10px;
 			margin: 10px 0 0;
-			color: #999999;
+			color: #555;
 			font-weight: normal;
 		}
 		
@@ -316,8 +325,8 @@
 		}
 		
 		#footer {
-			color: #cccccc;
-			font-size: 11px;
+			color: #555;
+			font-size: 14px;
 			margin-top: 40px;
 			margin-bottom: 20px;
 			padding: 0 10px;
@@ -325,12 +334,12 @@
 		}
 		
 		#footer a {
-			color: #cccccc;
+			color: #555;
 			font-weight: bold;
 		}
 		
 		#footer a:hover {
-			color: #999999;
+			color: #333;
 		}
 		
 	</style>
@@ -346,9 +355,9 @@
 		<ul id="header">
 			
 			<li>
-				<a href="<?php echo buildLink(array('s' => 'size', 'r' => (!$_sort_reverse && $_sort == 'size') ? '1' : null)) ?>" class="size <?php if ($_sort == 'size') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Size</span></a>
-				<a href="<?php echo buildLink(array('s' => 'time', 'r' => (!$_sort_reverse && $_sort == 'time') ? '1' : null)) ?>" class="date <?php if ($_sort == 'time') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Last modified</span></a>
-				<a href="<?php echo buildLink(array('s' =>  null , 'r' => (!$_sort_reverse && $_sort == 'name') ? '1' : null)) ?>" class="name <?php if ($_sort == 'name') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Name</span></a>
+				<a href="<?php echo buildLink(array('s' => 'size', 'r' => (!$_sort_reverse && $_sort == 'size') ? '1' : null)) ?>" class="size <?php if ($_sort == 'size') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Tamaño</span></a>
+				<a href="<?php echo buildLink(array('s' => 'time', 'r' => (!$_sort_reverse && $_sort == 'time') ? '1' : null)) ?>" class="date <?php if ($_sort == 'time') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Fecha modificado</span></a>
+				<a href="<?php echo buildLink(array('s' =>  null , 'r' => (!$_sort_reverse && $_sort == 'name') ? '1' : null)) ?>" class="name <?php if ($_sort == 'name') echo $_sort_reverse ? 'desc' : 'asc' ?>"><span>Nombre</span></a>
 			</li>
 			
 		</ul>

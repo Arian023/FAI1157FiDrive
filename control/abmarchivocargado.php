@@ -27,6 +27,8 @@ private function cargarObjeto($param){
         $usuario->setidusuario($param['idusuario']);
         $usuario->cargar();
 
+        // echo "<br><div style='white-space: pre-line'> Entró a if de cargarObjeto() - ".var_export($usuario, true)."</div><br>";
+        
         // Define todos los atributos del objeto archivocargado
         $nuevoObjeto->setear($param['idarchivocargado'], $param['acnombre'], 
             $param['acdescripcion'], $param['acicono'], 
@@ -68,14 +70,14 @@ private function seteadosCamposClaves($param){
 }
 
 /**
- * 
+ * Carga un nuevo archivo a la tabla
  * @param array $param
  */
 public function alta($param){
     $resp = false;
-    // $param['idarchivocargado'] =null;
+    //echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
+    // $param['idarchivocargado'] =null; <-- Ya se setea en control_archivos
     $Objarchivocargado = $this->cargarObjeto($param);
-    // verEstructura($Objarchivocargado);
     if ($Objarchivocargado!=null and $Objarchivocargado->insertar()){
         $resp = true;
     }
@@ -144,7 +146,7 @@ public function buscar($param){
             $where.=" and acfechainiciocompartir ='".$param['acfechainiciocompartir']."'";
         if  (isset($param['acefechafincompartir']))
             $where.=" and acefechafincompartir ='".$param['acefechafincompartir']."'";
-            // <-- En la base de datos aparece como A-C-E fechafincompartir, lo cual corresponde a archivocargadoestado 🤔
+            // <-- En la base de datos aparece como ac---E---fechafincompartir, lo cual corresponde a archivocargadoestado 🤔
         if  (isset($param['acprotegidoclave']))
             $where.=" and acprotegidoclave ='".$param['acprotegidoclave']."'";
     }

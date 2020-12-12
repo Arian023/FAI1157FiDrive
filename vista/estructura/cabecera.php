@@ -24,10 +24,12 @@
     <script src="../../vista/js/Buscador.js"></script>
     <!-- Estilo para editar texto enriquecido -->
     <link rel="stylesheet" href="../../vista/css/summernote-bs4.min.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css">  No me funciona local porque carga fuentes web -->
+    <?php include_once("../../configuracion.php");
+          $sesion = new Session;
+          // Valida si hay sesión iniciada, sino redirige cualquier otro sitio al inicio
+          // if ( null == $sesion->getuslogin() ) header("Location: ../../vista/index/index.php?login=2");
+    ?>
 </head>
 <body class="container my-3">
-    <?php include_once("../../configuracion.php"); 
-          include_once("../../vista/estructura/menu.php");
-    ?>
+    <?php include_once("../../vista/estructura/menu.php"); ?>
 <!-- Fin cabecera -->

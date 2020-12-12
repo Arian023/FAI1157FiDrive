@@ -10,7 +10,7 @@ if (isset($_GET['id']) )
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Compartir archivo</h1>
-	<hr class="my-2">
+	<hr class=my-4>
 	<p class="lead">Creamos el archivo compartirarchivo.php para compartir un archivos. Este archivo debe incluir los archivos: cabecera.php, pie.php y menu.php
 	</p>
 	<ul class="lead">
@@ -40,11 +40,18 @@ if (isset($_GET['id']) )
 
 </div> <!-- Fin div consigna -->
 
-<hr>
+<hr class=my-4>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
+<?php // Si no inició sesión, muestra solo aviso
+	if ( null == $sesion->getuslogin() ) {
+		echo "<div class='col alert alert-warning text-center' role='alert'>
+		<i class='fas fa-question-circle mx-2'></i>
+		Esta sección del sitio es para usuarios registrados. Por favor utiliza el botón [Iniciar sesión] del menú superior para ingresar.</div>";
+	} else { // Muestra el resto del contenido normalmente:	
+?>
 	<h4 class="text-md-center"><i class="fas fa-share-alt-square mx-2"></i>Opciones para compartir:</h4>
-	<form class="validarClave" name=compartir id=compartir method=post  novalidate>
+	<form class="validarClave" name=compartir id=compartir method=post action="../action/compartir.php" novalidate>
 		<div class="form-row">
 			<div class="form-group col-md-6">
 				<label for="nombre" class="font-weight-bold">Título del archivo a compartir</label>
@@ -52,41 +59,24 @@ if (isset($_GET['id']) )
 					<div class="input-group-prepend">
 						<span class="input-group-text"><i class="fas fa-tag"></i></span>
 					</div>
-					<input type=text class=form-control name=nombre id=nombre readonly 
+					<input type=text class=form-control name=acnombre id=titulo readonly 
 					value=<?php 
 							if ( isset($archivoSelec[0]) ) 
 								echo '"'.$archivoSelec[0]->getacnombre().'"';
 							else
 								echo "1234.png";
 						?> >
+					<!-- Hace un echo del valor de ID y ruta que recibe desde contenido.php
+						 Ruta es usado por validaciones.js para generar hash -->
 					<input type=hidden name=ruta id=ruta 
-						value=<?php 
-							if ( isset($archivoSelec[0]) ) 
-								echo '"'.$archivoSelec[0]->getaclinkacceso().'"';
-							else
-								echo "1234.png";
-						?> >
+						value=<?php if ( isset($archivoSelec[0]) ) echo '"'.$archivoSelec[0]->getaclinkacceso().'"'; ?> >
+					<input type=hidden name=idarchivocargado id=idarchivocargado 
+						value=<?php if (isset($_GET['id']) ) echo '"'.$_GET['id'].'"'?> >
 				</div>
 			</div>
-			<div class="form-group col-md-6">
-				<label for="usuario" class="font-weight-bold">Usuario</label>
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<span class="input-group-text"><i class="fas fa-user"></i></span>
-					</div>
-					<select class=form-control name=usuario id=usuario>
-						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
-						<?php // Lee los usuarios de la base de datos, y completa las opciones:
-						$listaUsuario = $AbmUsuario->buscar(null);
-						if(!empty($listaUsuario)){
-							foreach ($listaUsuario as $clave=>$usuario) {
-								echo '<option value='.$usuario->getidusuario().'>'
-									.$usuario->getusnombre().'</option>';
-							}
-						}?>
-					</select>
-				</div>
-			</div>
+			<!-- Se selecciona usuario de la sesión actual -->
+			<input type=hidden class='form-control' name=usuario id=usuario 
+					value='<?=$sesion->getidusuario()?>'>
 		</div>
 		<div class="form-row">
 			<div class="form-group col-md-6">
@@ -105,10 +95,10 @@ if (isset($_GET['id']) )
 				<input class="form-check-input" name=proteger id=proteger type=checkbox value="si" checked>
 				<label for="proteger" class="form-check-label font-weight-bold">Proteger con contraseña</label>
 			</div>
-			<div class="form-group col-md-6" id=validarClave> <!-- Se muestra u oculta al marcar proteger con clave -->
+			<div class="form-group col-md-6" id=campoClave> <!-- Se muestra u oculta al marcar proteger con clave -->
 				<label for="clave" class="font-weight-bold">Indique contraseña</label>
 				<div class="input-group">
-					<input type=password class="validarClave__input form-control" name=clave id=clave aria-describedby="passwordHelp">
+					<input type=password class="validarClave__input form-control" name=acprotegidoclave id=clave aria-describedby="passwordHelp">
 					<div class="input-group-append">
 						<button class="validarClave__visibility btn btn-outline-secondary" type="button"><span class="validarClave__visibility-icon" data-visible="hidden"><i class="fas fa-eye-slash"></i></span><span class="validarClave__visibility-icon js-hidden" data-visible="visible"><i class="fas fa-eye"></i></span></button>
 					</div>
@@ -120,19 +110,22 @@ if (isset($_GET['id']) )
 				</div>
 				<!-- Carga script para validar fuerza de contraseña -->
 				<!-- Nota: Cargarlo en pie.php da error en consola si se ejecuta en otros sitios que no lo usan -->
-				<script src="../vista/js/validarClave.js"></script>
+				<script src="../js/validarClave.js"></script>
 				<script type="text/javascript">
 					// Deshabilitar o habilitar campo clave - Fuente: https://stackoverflow.com/a/15140254
 					document.getElementById('proteger').onchange = function() {
 						document.getElementById('clave').disabled = !this.checked;
 						// Si está desmarcado, se oculta campo y no se valida
 						if (document.getElementById('clave').disabled) {
-							document.getElementById('validarClave').style.display = "none";
+							document.getElementById('campoClave').style.display = "none";
 						} else {
-							document.getElementById('validarClave').style.display = "block";
+							document.getElementById('campoClave').style.display = "block";
 						}
 					};
 				</script>
+				<noscript>
+					<p><i>El navegador no tiene habilitado javascript. Debe habilitarlo para validar su nivel de clave.</i></p>
+				</noscript>
 			</div>
 		</div>
 		<div class="form-row">
@@ -141,13 +134,17 @@ if (isset($_GET['id']) )
 			</div>
 			<div class="form-group col-md-6">
 				<label for="enlace" class="font-weight-bold"></label>
-				<button onclick="generarLink()" class="btn btn-info validarClave__submit">Generar enlace</button>
+				<!-- PROBAR USAR BUTTON O INPUT PARA VALIDAR CLAVE -->
+				<button type=submit id=enviar onclick="generarLink()" class="btn btn-info validarClave__submit">Generar enlace</button>
 			</div>
 		</div>
 	</form> <!-- Fin formulario amarchivo -->
+<?php
+	} // Fin else de sesión activa
+?>
 </div> <!-- Fin div formulario -->
 
-<hr>
+<hr class=my-4>
 <div class=row>
 	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>

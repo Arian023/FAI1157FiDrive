@@ -1,4 +1,4 @@
-<?php $Titulo = "Ver contenido - FiDrive"; 
+<?php $Titulo = "Ver contenido cargado - FiDrive"; 
 include_once("../../vista/estructura/cabecera.php");
 // Llama al objeto con métodos para manejar carga de archivos:
 $control = new control_archivos();
@@ -10,8 +10,9 @@ $AbmEstadoArchivo = new abmarchivocargadoestado();
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Ver contenido almacenado</h1>
-	<hr class="my-2">
-	<p class="lead">Crear un archivo, en la carpeta vista, llamado contenido.php que muestre recursivamente los archivos contenidos en la carpeta llamada archivo. Este archivo debe incluir los archivos: cabecera.php, pie.php y menu.php<br>
+	<hr class=my-4>
+	<p class="lead">Crear un archivo, en la carpeta vista, llamado contenido.php que muestre recursivamente 
+	los archivos contenidos en la carpeta llamada archivo. Este archivo debe incluir los archivos: cabecera.php, pie.php y menu.php<br>
 	Agregar los siguientes botones:<br>
 	</p>
 	<ul class="lead">
@@ -22,30 +23,40 @@ $AbmEstadoArchivo = new abmarchivocargadoestado();
 	</ul>
 </div> <!-- Fin div consigna -->
 
-<hr>
+<hr class="my-3">
 
 <div class="container p-2" id=contenido> <!-- Comienzo div contenido -->
-	<h4 class="text-md-center"><i class='fas fa-folder mx-2'></i>Listado de archivos:</h4>
+<?php // Si no inició sesión, muestra solo aviso
+	if ( null == $sesion->getuslogin() ) {
+		echo "<div class='col alert alert-warning text-center' role='alert'>
+		<i class='fas fa-question-circle mx-2'></i>
+		Esta sección del sitio es para usuarios registrados. Por favor utiliza el botón [Iniciar sesión] del menú superior para ingresar.</div>";
+	} else { // Muestra el resto del contenido normalmente:	
+?>
+	<h4 class="text-md-center"><i class='fas fa-folder mx-2'></i>Listado de archivos cargados:</h4>
 	<div class="row justify-content-start">
-		<div class="col-md-4 justify-content-start">
+		<div class="col-md-10 justify-content-start">
 		<a href='../index/amarchivo.php?modificar=0' class="btn btn-info"><i class='fas fa-file-upload mx-2'></i>Cargar archivo</a>
+		<a href='../index/compartidos.php' class="btn btn-info"><i class='fas fa-share-alt-square mx-2'></i>Ver compartidos</a>
 		</div>
-		<div class="col-md-8 form-inline justify-content-end">
+		<div class="col-md-2 form-inline justify-content-end">
 		
 		</div>
 	</div> <!-- Fin menú navegación -->
-	<hr>
+	<hr class=my-4>
 
 	<div class="container-md row"> <!-- Comienzo div archivos mostrados -->
-	<?php // Procede a buscar todos los archivos cargados:
-	$listaArchivos = $AbmArchivoCargado->buscar(null);
+	<?php // Procede a buscar todos los archivos cargados del usuario activo:
+	$usuarioActual['idusuario'] = $sesion->getidusuario();
+	$listaArchivos = $AbmArchivoCargado->buscar($usuarioActual);
+	// echo "<br><div style='white-space: pre-line'>"; print_r($listaArchivos); echo "</div><br>";
 	// Recorre todo el listado de archivos:
 	if (empty($listaArchivos)) {
 	echo "<div class='col alert alert-secondary text-center' role='alert'>
 	<i class='fas fa-question-circle mx-2'></i>No hay archivos almacenados</div>";
 	} else {
 	// Como el modal no funcionó, se muestran iconos apilados uno abajo del otro, donde la segunda columna muestra algunos detalles del archivo
-	echo "<div class=row>";
+	echo "<div class=row> <!-- Comienzo lista de archivos -->\n";
 	foreach ($listaArchivos as $archivo) {
 	if($AbmEstadoArchivo->estaHabilitado($archivo->getidarchivocargado())) {
 	// Muestra cada archivo en una tarjeta animada cajaIcono:
@@ -81,26 +92,6 @@ $AbmEstadoArchivo = new abmarchivocargadoestado();
 			echo empty($archivo->getacprotegidoclave()) ? "NO" : "SI";
 		echo "</dd>
 	</dl>
-	<dl class=row>
-		<dd class=col>
-			<b>Cantidad descarga:</b> ".$archivo->getaccantidaddescarga().".
-		</dd>
-		<dd class=col>
-			<b>Cantidad usada:</b> ".$archivo->getaccantidadusada().".
-		</dd>
-	</dl>
-	<dl class=row>
-		<dd class=col>
-			<b>Fecha compartido:</b> ";
-			echo "0000-00-00 00:00:00" == $archivo->getacfechainiciocompartir() ? 
-				"<i>(Sin compartir)</i>" : $archivo->getacfechainiciocompartir();
-		echo "</dd>
-		<dd class=col>
-			<b>Fecha expiración compartido:</b> ";
-			echo "0000-00-00 00:00:00" == $archivo->getacefechafincompartir() ? 
-			"<i>(Sin compartir)</i>" : $archivo->getacefechafincompartir();
-	echo "</dd>
-	</dl>
 	<dl class=row><dd class=col>
 		<b>Descripción:</b> ".$archivo->getacdescripcion()."</a>
 	</dd></dl>
@@ -110,13 +101,15 @@ $AbmEstadoArchivo = new abmarchivocargadoestado();
 		
 	} // Fin if estáHabilitado
 	} // Fin foreach
-	echo "</div> <!-- Fin filas de iconos -->\n";
+	echo "</div> <!-- Fin lista apilada de archivos -->\n";
 	} // -- Termina de listar archivos --
 	?>
 	</div> <!-- Fin div archivos mostrados -->
 </div> <!-- Fin div contenido -->
-
-<hr>
+<?php
+	} // Fin else de sesión activa
+?>
+<hr class=my-4>
 <a href="../index/index.php" class="btn btn-outline-dark"><i class='fas fa-home mx-2'></i>Volver al inicio</a>
 </div> <!-- Fin div cuerpo -->
 <?php include_once("../../vista/estructura/pie.php"); 

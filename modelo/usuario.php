@@ -58,6 +58,7 @@ public function insertar(){
         .$this->getusclave()."', '"
         .$this->getusactivo()."'
     );";
+    echo "<br><div style='white-space: pre-line'> Consulta SQL: ".var_export($sql, true)."</div><br>";
     if ($base->Iniciar()) {
         if ($esteid = $base->Ejecutar($sql)) {
             // Si se usa ID autoincrement, descomentar lo siguiente:
@@ -82,6 +83,7 @@ public function modificar(){
     ."', usclave='".$this->getusclave()
     ."', usactivo='".$this->getusactivo()
     ."' WHERE idusuario=".$this->getidusuario();
+    print_r($sql);
     if ($base->Iniciar()) {
         if ($base->Ejecutar($sql)) {
             $resp = true;

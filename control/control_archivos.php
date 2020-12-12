@@ -1,7 +1,5 @@
 <?php
 class control_archivos {
-    // Nota: Este control trabaja con archivos ubicados en una subcarpeta de donde se encuentra la página web invocada
-    // Ejemplo: Sitio en ../vista/index.php, archivo en ../vista/archivos/ejemplo.txt 
 
 private $dir = "../../archivos/"; // Carpeta por defecto
 private $phpFileUploadErrors = array(
@@ -47,7 +45,7 @@ public function errorCarga($archivo) {
 
 // --- Funciones de escritura (guardado y borrado) ---
 
-// Nota 06/10: Los métodos crearDescripcion() y guardarComo() no se usan por malinterpretación de consigna. Más adelante se agregarán las funcionalidades para almacenar el título, usuario, descripción e icono en la base de datos
+// Nota: Varios métodos son para trabajo con archivos, sin base de datos
 public function crearDescripcion($ruta, $nom, $desc) {
     /* Crea un archivo de texto asociado a un archivo subido. Contiene texto enriquecido para ser mostrado en la página.
      * @param String $ruta La ubicación de la carpeta donde se crea
@@ -67,7 +65,7 @@ public function crearDescripcion($ruta, $nom, $desc) {
 }
 
 public function guardarComo($archivo, $datosIng) {
-    /* Procedimiento de guardado - CUARTA ENTREGA
+    /* Procedimiento de guardado
      * @param Array $Archivo Trae los datos del archivo a cargar (ej: $_FILES['archivoIng'])
      * @param Array $datosIng Trae información del formulario (ej: $_POST)
      * @return int $codError El resultado del copiado (0 = éxito, 1 = error archivocargado, 2, 3 y 4 = error archivocargadoestado)
@@ -103,7 +101,7 @@ public function guardarComo($archivo, $datosIng) {
         "accantidaddescarga" => 0,
         "accantidadusada" => 0,
         "acfechainiciocompartir" => null,
-        "acfechafincompartir" => null,
+        "acefechafincompartir" => null,
         "acprotegidoclave" => null
     );
 
@@ -294,7 +292,7 @@ public function modificar($datosIng) {
 }
 
 public function compartir($datosIng) {
-    /* Procedimiento para compartir - CUARTA ENTREGA
+    /* Procedimiento para compartir
      * @param Array $datosIng Trae información del formulario (ej: $_POST)
      * @return int $codError El resultado de la operación (0 = éxito, 1 = error copia, 2 y 3 = error BD)
      */
@@ -314,12 +312,14 @@ public function compartir($datosIng) {
         "acicono" => $objArchivocargado[0]->getacicono(),
         "idusuario" => $datosIng['usuario'],
         "aclinkacceso" => $objArchivocargado[0]->getaclinkacceso(),
-        "accantidaddescarga" => $datosIng['accantidaddescarga'],
-        "accantidadusada" => $datosIng['accantidadusada'],
+        "accantidaddescarga" => $datosIng['cantDescargas'],
+        "accantidadusada" => 0,
         "acfechainiciocompartir" => date("Y-m-d H:i:s"),
-        "acefechafincompartir" => date("Y-m-d H:i:s", strtotime( date("Y-m-d H:i:s")." + ".$datosIng['cantDias']." days") ),
-        "acprotegidoclave" => $datosIng['acprotegidoclave']
+        "acefechafincompartir" => date("Y-m-d H:i:s", strtotime( date("Y-m-d H:i:s")." + ".$datosIng['cantDias']." days") )
     );
+    // Datos opcionales a ser ingresados por el usuario (seteados si existen, sino vacíos):
+    $datosModArchivo['acprotegidoclave'] = isset($datosIng['acprotegidoclave']) ? sha1('FiDrive'.$datosIng['acprotegidoclave']) : "";
+    $datosModArchivo['accantidaddescarga'] = isset($datosIng['cantDescargas']) ? $datosIng['cantDescargas'] : 0;
 
     if ($AbmCargado->modificacion($datosModArchivo)) {
         // Se obtiene instancia de objeto archivo, ahora modificado
@@ -342,7 +342,7 @@ public function compartir($datosIng) {
             $ultimoEstado->setacefechafin( date('Y-m-d H:i:s') );
             $ultimoEstado->modificar();
         }
-        // Carga nuevo estado modificado:
+        // Carga nuevo estado compartido:
         if ( $AbmEstado->alta($datosModEstado) ) {
             // Si pudo cargar el nuevo estado y modificar todo lo demás:
             $codError = 0;
@@ -357,13 +357,71 @@ public function compartir($datosIng) {
     return $codError;
 }
 
-public function noCompartir($ruta, $nom, $motivo) {
-    /* Procedimiento para dejar de compartir - SIN USO EN SEGUNDA ENTREGA
-     * @param String $ruta Indica la ruta del archivo (ej: '../archivos/')
-     * @param String $nom Nombre del archivo (ej: 'imagen.jpg')
-     * @param String $motivo Motivo por el cual se deja de compartir
+public function noCompartir($datosIng) {
+    /* Procedimiento para dejar de compartir - CUARTA ENTREGA
+     * @param Array $datosIng Trae información del formulario (ej: $_POST)
      * @return boolean Resultado de la operación
      */
+
+    // Llama a los ABM para crear objetos y cargar los datos:
+    $AbmCargado = new abmarchivocargado();
+    $AbmEstado = new abmarchivocargadoestado();
+
+    // Se busca el registro a modificar, y se cargan los datos para mantenerlos:
+    $objArchivocargado = $AbmCargado->buscar( array("idarchivocargado" => $datosIng['idarchivocargado']) );
+
+    // Prepara arreglo de parámetros para la modificación en tabla archivocargado:
+    $datosModArchivo = array(
+        "idarchivocargado" => $datosIng['idarchivocargado'],
+        "acnombre" => $objArchivocargado[0]->getacnombre(),
+        "acdescripcion" => $objArchivocargado[0]->getacdescripcion(),
+        "acicono" => $objArchivocargado[0]->getacicono(),
+        "idusuario" => $datosIng['usuario'],
+        "aclinkacceso" => $objArchivocargado[0]->getaclinkacceso(),
+        "accantidaddescarga" => 0,
+        "accantidadusada" => 0,
+        "acfechainiciocompartir" => "0000-00-00 00:00:00",
+        "acefechafincompartir" => "0000-00-00 00:00:00"
+    );
+    // Datos opcionales a ser ingresados por el usuario (seteados si existen, sino vacíos):
+    $datosModArchivo['acprotegidoclave'] = isset($datosIng['acprotegidoclave']) ? $datosIng['acprotegidoclave'] : "";
+    $datosModArchivo['accantidaddescarga'] = isset($datosIng['cantDescargas']) ? $datosIng['cantDescargas'] : 0;
+
+    if ($AbmCargado->modificacion($datosModArchivo)) {
+        // Se obtiene instancia de objeto archivo, ahora modificado
+
+        // Prepara arreglo de parámetros para el alta en tabla archivocargadoestado:
+        $datosModEstado = array(
+            "idarchivocargadoestado" => null, // Autoincrement
+            "idestadotipos" => 2, // Compartido
+            "acedescripcion" => $datosIng['descripcion'],
+            "idusuario" => $datosIng['usuario'],
+            "acefechaingreso" => date('Y-m-d H:i:s'), // Fecha y hora actual
+            "acefechafin" => null,
+            "idarchivocargado" => $datosIng['idarchivocargado'],
+        );
+
+        // Se obtiene el objeto del último estado activo para setear fecha fin:
+        $ultimoEstado = $AbmEstado->ultimoEstadoVigente($datosIng['idarchivocargado']);
+
+        if (! $ultimoEstado===false) {
+            $ultimoEstado->setacefechafin( date('Y-m-d H:i:s') );
+            $ultimoEstado->modificar();
+        }
+        // Carga nuevo estado "no compartido":
+        if ( $AbmEstado->alta($datosModEstado) ) {
+            // Si pudo cargar el nuevo estado y modificar todo lo demás:
+            $codError = 0;
+        } else {
+            // Si no pudo cargar nuevo estado:
+            $codError = 2;
+        }
+    } else {
+        // Si no pudo modificar el archivocargado:
+        $codError = 1;
+    }
+    return $codError;
+    
     return true;
 }
 

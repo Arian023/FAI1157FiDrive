@@ -57,25 +57,61 @@ private function seteadosCamposClaves($param){
  */
 public function alta($param){
     $resp = false;
-    // $param['idusuario'] =null;
+
+
+    echo "<br><div style='white-space: pre-line'>Clave al pasar por alta(): ".var_export($param['usclave'], true)."</div><br>";
+
+
+    // Se setean valores por defecto durante el alta:
+    $param['idusuario'] = null;
+    $param['usactivo'] = 1;
+    // usclave ya tendría hash md5, se agrega salt sencillo para complejizar cifrado:
+    $param['usclave'] = sha1('FiDrive'.$param['usclave']);
+
+
+    echo "<br><div style='white-space: pre-line'> Valores luego de pasar por alta: ".var_export($param, true)."</div><br>";
+
+
     $Objusuario = $this->cargarObjeto($param);
-    // verEstructura($Objusuario);
+
     if ($Objusuario!=null and $Objusuario->insertar()){
-        $resp = true;
+        // Al hacer el alta de usuario, también se hace el alta de su rol
+
+        // Igual que en guardarComo() (de control_archivos.php), se obtiene instancia de objeto archivo, aprovechando los mismos datos para el alta:
+        $nuevoUsuario = $this->buscar($param);
+        $usuarioRol = array('idusuario' => $nuevoUsuario[0]->getidusuario(), 'idrol' => 3);
+
+        
+        echo "<br><div style='white-space: pre-line'> Valores de usuarioRol: ".var_export($usuarioRol, true)."</div><br>";
+
+
+        $AbmUsuarioRol = new abmusuariorol;
+        $resp = $AbmUsuarioRol->alta($usuarioRol);
     }
     return $resp;
 }
 
 /**
- * permite eliminar un objeto 
+ * Según idusuario y usactivo, desactiva o reactiva la cuenta
  * @param array $param
  * @return boolean
  */
 public function baja($param){
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
-        $Objusuario = $this->cargarObjetoConClave($param);
-        if ($Objusuario!=null and $Objusuario->eliminar()){
+        // Un poco rebuscado el método, pero busca los datos según el idusuario:
+        $usuario = $this->buscar($param);
+        // Viene seteado idusuario y usactivo en arreglo $param (si, baja también reactiva la cuenta)
+        // Setea los demás datos para crear el objeto con el que modificar:
+        $param['usnombre'] = $usuario[0]->getusnombre();
+        $param['usapellido'] = $usuario[0]->getusapellido();
+        $param['uslogin'] = $usuario[0]->getuslogin();
+        $param['usclave'] = $usuario[0]->getusclave();
+
+        echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
+
+        $Objusuario = $this->cargarObjeto($param);
+        if ($Objusuario!=null and $Objusuario->modificar()){
             $resp = true;
         }
     }
@@ -90,9 +126,14 @@ public function baja($param){
  */
 public function modificacion($param){
     // echo "<i>**Realizando la modificación**</i>";
-    echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
+    // echo "<br><div style='white-space: pre-line'>".var_export($param, true)."</div><br>";
     $resp = false;
     if ($this->seteadosCamposClaves($param)){
+
+        // usclave ya tendría hash md5, se agrega salt sencillo para complejizar cifrado:
+        $param['usclave'] = sha1('FiDrive'.$param['usclave']);
+
+
         $Objusuario = $this->cargarObjeto($param);
         if($Objusuario!=null and $Objusuario->modificar()){
             $resp = true;

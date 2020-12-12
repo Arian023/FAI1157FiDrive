@@ -10,7 +10,7 @@ if (isset($_GET['id']) )
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Eliminar archivo</h1>
-	<hr class="my-2">
+	<hr class=my-4>
     <p class="lead">Creamos el archivo eliminararchivo.php para eliminar un Archivo. Este archivo debe incluir los archivos: cabedera.php, pie.php y menu.php
 	</p>
 	<ul class="lead">
@@ -27,9 +27,16 @@ if (isset($_GET['id']) )
 	</ul>
 </div> <!-- Fin div consigna -->
 
-<hr>
+<hr class=my-4>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
+<?php // Si no inició sesión, muestra solo aviso
+	if ( null == $sesion->getuslogin() ) {
+		echo "<div class='col alert alert-warning text-center' role='alert'>
+		<i class='fas fa-question-circle mx-2'></i>
+		Esta sección del sitio es para usuarios registrados. Por favor utiliza el botón [Iniciar sesión] del menú superior para ingresar.</div>";
+	} else { // Muestra el resto del contenido normalmente:	
+?>
 	<h4 class="text-md-center"><i class="fas fa-trash mx-2"></i>Opciones para eliminar:</h4>
 	<form name=eliminar id=eliminar method=post action="../action/borrado.php" enctype="multipart/form-data" novalidate>
 		<div class="form-row">
@@ -46,29 +53,13 @@ if (isset($_GET['id']) )
 							else
 								echo "1234.png";
 						?> >
-					<input type=hidden class=form-control name=idarchivocargado id=idarchivocargado 
-						<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
 				</div>
+				<input type=hidden class=form-control name=idarchivocargado id=idarchivocargado 
+						<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
 			</div>
-			<div class="form-group col-md-6">
-				<label for="usuario" class="font-weight-bold">Usuario</label>
-				<div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-					<select class="form-control" name=usuario id=usuario>
-						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
-						<?php // Lee los usuarios de la base de datos, y completa las opciones:
-						$listaUsuario = $AbmUsuario->buscar(null);
-						if(!empty($listaUsuario)){
-							foreach ($listaUsuario as $clave=>$usuario) {
-								echo '<option value='.$usuario->getidusuario().'>'
-									.$usuario->getusnombre().'</option>';
-							}
-						}?>
-					</select>
-                </div>
-			</div>
+			<!-- Se selecciona usuario de la sesión actual -->
+			<input type=hidden class='form-control' name=usuario id=usuario 
+					value='<?=$sesion->getidusuario()?>'>
 		</div>
 		<div class="form-row">
 			<div class="form-group col-md-12">
@@ -84,9 +75,12 @@ if (isset($_GET['id']) )
 			</div>
 		</div>
 	</form> <!-- Fin formulario amarchivo -->
+<?php
+	} // Fin else de sesión activa
+?>
 </div> <!-- Fin div formulario -->
 
-<hr>
+<hr class=my-4>
 <div class=row>
 	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>

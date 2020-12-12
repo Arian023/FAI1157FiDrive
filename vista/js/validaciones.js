@@ -46,6 +46,7 @@ $('#amarchivo').bootstrapValidator({
             },
             stringLength: {
                 min: 3,
+                max: 150,
                 message: 'El título debe ser mayor a 3 caracteres. '
             }
         }
@@ -67,14 +68,14 @@ $('#amarchivo').bootstrapValidator({
                 message: 'Debe ingresar una descripción. '
             }
         }
-        },
+        }, /* Campo oculto, se selecciona automáticamente:
         usuario: {
         validators: {
             notEmpty: {
                 message: 'Debe seleccionar un usuario. '
             }
         }
-        },
+        }, */
         icono: {
         validators: {
             notEmpty: {
@@ -125,7 +126,7 @@ $('#compartir').bootstrapValidator({
         validating: 'fas fa-refresh'
     },
     fields: {
-        nombre: {
+        titulo: {
         validators: {
             notEmpty: {
                 message: 'El archivo debe estar seleccionado desde la página Contenido. '
@@ -143,14 +144,14 @@ $('#compartir').bootstrapValidator({
                 message: 'La contraseña debe tener entre 6 y 30 caracteres. '
             }*/
         }
-        },
+        } /* Campo oculto, se selecciona automáticamente:
         usuario: {
         validators: {
             notEmpty: {
                 message: 'Debe seleccionar un usuario. '
             }
         }
-        }
+        } */
     }
 });
 $(document).ready(function () {
@@ -202,14 +203,14 @@ $('#nocompartir').bootstrapValidator({
                 message: 'Debe ingresar el motivo. '
             }
         }
-        },
+        } /* Campo oculto, se selecciona automáticamente:
         usuario: {
         validators: {
             notEmpty: {
                 message: 'Debe seleccionar un usuario. '
             }
         }
-        }
+        } */
     }
 });
 $(document).ready(function () {
@@ -237,30 +238,170 @@ $('#eliminar').bootstrapValidator({
                 message: 'Debe ingresar el motivo. '
             }
         }
-        },
+        } /* Campo oculto, se selecciona automáticamente:
         usuario: {
         validators: {
             notEmpty: {
                 message: 'Debe seleccionar un usuario. '
             }
         }
-        }
+        } */
     }
 });
 $(document).ready(function () {
     $('#eliminar').confirmarSalir('');
 });
 
-// --- Ver contenido: ---
-/* Reemplazado por validación integrada de Bootstrap (sale un tooltip más zafable, sino este texto arruina el orden)
-$('#nuevacarpeta').bootstrapValidator({
+// --- Iniciar sesión: ---
+/*
+$('#login').bootstrapValidator({
+    feedbackIcons: {
+        valid: 'fas fa-check',
+        invalid: 'fas fa-times',
+        validating: 'fas fa-refresh'
+    },
     fields: {
-        nombre: {
+        uslogin: {
         validators: {
             notEmpty: {
-                message: 'Debe ingresar un nombre de carpeta. '
+                message: 'Debe ingresar su nombre de usuario. '
+            },
+            stringLength: {
+                min: 2,
+                max: 150,
+                message: 'El usuario debe ser mayor a 2 caracteres. '
             }
         }
-    }
+        },
+        usclave: {
+        validators: {
+            notEmpty: {
+                message: 'Introduzca una contraseña. '
+            },
+            stringLength: {
+                min: 2,
+                max: 150,
+                message: 'La contraseña debe tener al menos 2 caracteres. '
+            },
+            different: {
+                field: 'uslogin',
+                message: 'La contraseña no puede ser igual al nombre de usuario. '
+            }
+        }
+        }
     }
 }); */
+
+// --- Registrar usuario nuevo o iniciar sesión: ---
+$('#registro, #login').bootstrapValidator({
+    feedbackIcons: {
+        valid: 'fas fa-check',
+        invalid: 'fas fa-times',
+        validating: 'fas fa-refresh'
+    },
+    fields: {
+        usnombre: {
+        validators: {
+            notEmpty: {
+                message: 'Debe ingresar su nombre. '
+            },
+            stringLength: {
+                min: 2,
+                max: 150,
+                message: 'El nombre debe ser mayor a 2 caracteres. '
+            }
+        }
+        },
+        usapellido: {
+        validators: {
+            notEmpty: {
+                message: 'Debe ingresar su apellido. '
+            },
+            stringLength: {
+                min: 2,
+                max: 150,
+                message: 'El apellido debe ser mayor a 2 caracteres. '
+            }
+        }
+        },
+        uslogin: {
+        validators: {
+            notEmpty: {
+                message: 'Debe ingresar su nombre de usuario. '
+            },
+            stringLength: {
+                min: 2,
+                max: 150,
+                message: 'El usuario debe ser mayor a 2 caracteres. '
+            }
+        }
+        },
+        usclave: {
+        validators: {
+            notEmpty: {
+                message: 'Introduzca una contraseña. '
+            },
+            identical: {
+                field: 'confirmarclave',
+                message: 'La contraseña y su confirmación no son idénticas. '
+            },
+            different: {
+                field: 'uslogin',
+                message: 'La contraseña no puede ser igual al nombre de usuario. '
+            }/* Reemplazado por plugin validarClave.js ,
+            stringLength: {
+                min: 6,
+                max: 30,
+                message: 'La contraseña debe tener entre 6 y 30 caracteres. '
+            }*/
+        }
+        },
+        confirmarclave: {
+        validators: {
+            notEmpty: {
+                message: 'Debe confirmar la contraseña. '
+            },
+            identical: {
+                field: 'usclave',
+                message: 'La contraseña y su confirmación no son idénticas. '
+            }
+        }
+        }
+    }
+});
+$(document).ready(function () {
+    $('#registro').confirmarSalir('');
+});
+
+function claveSegura() {
+    // Toma la clave ingresada por usuario y la modifica en md5
+    var usclave = document.getElementById("usclave").value;
+    usclave = md5(usclave);
+    document.getElementById("usclave").value = usclave;
+    alert('Se cifró clave con md5: '+usclave);
+}
+
+/*
+    var confirmarclave = document.getElementById("confirmarclave").value;
+    if(null != confirmarclave) {
+        confirmarclave = md5(confirmarclave);
+    }
+
+Opción alternativa mediante Jquery:
+
+$('#login').submit(function() { 
+    var claveIng = $('#usclave').val();
+    $('#usclave').val(md5(claveIng));
+    $('#confirmarclave').val(md5(claveIng));
+    alert('Se cifró clave con md5');
+    return false; // return false cancela formulario
+});
+
+$('#registro').submit(function() { 
+    var claveIng = $('#usclave').val();
+    $('#usclave').val(md5(claveIng));
+    $('#confirmarclave').val(md5(claveIng));
+    alert('Se cifró clave con md5');
+    return false; // return false cancela formulario
+});
+*/

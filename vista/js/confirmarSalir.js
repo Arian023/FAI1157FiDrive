@@ -1,6 +1,6 @@
 /*!
- * jQuery confirmarSalir plugin
- * https://github.com/dunglas/jquery.confirmarSalir
+ * jQuery confirmExit plugin
+ * https://github.com/dunglas/jquery.confirmExit
  *
  * Copyright 2012 Kévin Dunglas <dunglas@gmail.com>
  * Released under the MIT license

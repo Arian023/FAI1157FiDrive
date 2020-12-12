@@ -10,7 +10,7 @@ if (isset($_GET['id']) )
 <div class="card p-2 shadow-lg" id=cuerpo> <!-- Comienzo div cuerpo-->
 <div class="jumbotron jumbotron-fluid p-2 m-auto"> <!-- Comienzo div consigna -->
 	<h1 class="display-4">Alta o modificación</h1>
-	<hr class="my-2">
+	<hr class=my-4>
     <p class="lead">Creamos el archivo amarchivo.php para alta o modificación de un Archivo. Este archivo debe incluir los archivos: cabecera.php, pie.php y menu.php
 	</p>
 	<ul class="lead">
@@ -33,14 +33,21 @@ if (isset($_GET['id']) )
 	</ul>
 </div> <!-- Fin div consigna -->
 
-<hr>
+<hr class=my-4>
 
 <div class="container p-2" id=formulario> <!-- Comienzo div formulario -->
+<?php // Si no inició sesión, muestra solo aviso
+	if ( null == $sesion->getuslogin() ) {
+		echo "<div class='col alert alert-warning text-center' role='alert'>
+		<i class='fas fa-question-circle mx-2'></i>
+		Esta sección del sitio es para usuarios registrados. Por favor utiliza el botón [Iniciar sesión] del menú superior para ingresar.</div>";
+	} else { // Muestra el resto del contenido normalmente:	
+?>
 	<h4 class="text-md-center"><i class="fas fa-upload mx-2"></i>Ingrese los siguientes datos para <?= empty($modificar) ? "cargar" : "modificar" ?> el archivo:</h4>
 	<form name=amarchivo id=amarchivo method=post action="../action/carga.php" enctype="multipart/form-data" novalidate>
-		<div class="form-row">
+		<div class=form-row>
 			<div class="form-group col-md-6">
-				<label for="titulo" class="font-weight-bold">Título del archivo</label>
+				<label for="titulo" class=font-weight-bold>Título del archivo</label>
 				<div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-tag"></i></span>
@@ -55,7 +62,7 @@ if (isset($_GET['id']) )
 				</div>
 			</div>
 			<div class="form-group col-md-6">
-				<label for=archivoIng class="font-weight-bold">Archivo seleccionado</label>
+				<label for=archivoIng class=font-weight-bold>Archivo seleccionado</label>
 				<?php // Puedo mostrar un campo de texto ilustrativo sobre el archivo seleccionado, en lugar de botón de carga
 				if ( isset($archivoSelec[0]) )  {
 					echo "<input type=text class='form-control' name=archivoIng id=archivoIng 
@@ -66,9 +73,9 @@ if (isset($_GET['id']) )
 				} ?>
 			</div>
 		</div>
-		<div class="form-row">
+		<div class=form-row>
 			<div class="form-group col-md-12">
-				<label for="descripcion" class="font-weight-bold">Escriba una descripción</label>
+				<label for="descripcion" class=font-weight-bold>Escriba una descripción</label>
 				<textarea class=form-control name=acdescripcion id=descripcion rows=2>
 				<?php 
 					if ( isset($archivoSelec[0]) ) 
@@ -79,41 +86,21 @@ if (isset($_GET['id']) )
 				</textarea>
 			</div>
 		</div>
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label for="usuario" class="font-weight-bold">Usuario</label>
-				<div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    </div>
-					<select class=form-control name=usuario id=usuario>
-						<option value=Ninguno disabled selected value>Seleccione una opción...</option>
-						<?php // Lee los usuarios de la base de datos, y completa las opciones:
-						$listaUsuario = $AbmUsuario->buscar(null);
-						if(!empty($listaUsuario)){
-							foreach ($listaUsuario as $clave=>$usuario) {
-								echo '<option value='.$usuario->getidusuario().'>'
-									.$usuario->getusnombre().'</option>';
-							}
-						}?>
-					</select>
-                </div>
-			</div>
-			<div class="form-group col-md-6">
-				<!-- Hace un echo del valor de ID y mod que recibe desde contenido.php -->
-				<input type=hidden class=form-control name=idarchivocargado id=idarchivocargado 
-					<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
-				<input type=hidden class=form-control name=mod id=mod 
-					<?php if (isset($_GET['mod']) ) echo 'value="'.$_GET['mod'].'"'?> >
-				<script type="text/javascript">
-					// Deshabilitar campo archivoIng cuando se recibe valor de modificar desde contenido.php
-					if (document.getElementById('mod').value != 0) {
-						document.getElementById('archivoIng').disabled = true;
-					}
-				</script>
-			</div>
-		</div>
-		<div class="form-row">
+		<!-- Se selecciona usuario de la sesión actual -->
+		<input type=hidden class='form-control' name=usuario id=usuario 
+				value='<?=$sesion->getidusuario()?>'>
+		<!-- Hace un echo del valor de ID y mod que recibe desde contenido.php -->
+		<input type=hidden name=idarchivocargado id=idarchivocargado 
+			<?php if (isset($_GET['id']) ) echo 'value="'.$_GET['id'].'"'?> >
+		<input type=hidden name=mod id=mod 
+			<?php if (isset($_GET['mod']) ) echo 'value="'.$_GET['mod'].'"'?> >
+		<script type="text/javascript">
+			// Deshabilitar campo archivoIng cuando se recibe valor de modificar desde contenido.php
+			if (document.getElementById('mod').value != 0) {
+				document.getElementById('archivoIng').disabled = true;
+			}
+		</script>
+		<div class=form-row>
 			<div class="form-group col-md-12">
 				<div class="flex-row-reverse">
 					<label for="icono" class="col-form-label font-weight-bold">Ícono a utilizar</label>
@@ -147,7 +134,7 @@ if (isset($_GET['id']) )
 				</div>
 			</div>
 		</div>
-		<div class="form-row">
+		<div class=form-row>
 			<div class="form-group col-md-6">
 			</div>
 			<div class="form-group col-md-6 text-right">
@@ -155,9 +142,12 @@ if (isset($_GET['id']) )
 			</div>
 		</div>
 	</form> <!-- Fin formulario amarchivo -->
+<?php
+	} // Fin else de sesión activa
+?>
 </div> <!-- Fin div formulario -->
 
-<hr>
+<hr class=my-4>
 <div class=row>
 	<div class=col><a href="../index/contenido.php" class="btn btn-outline-dark btn-block">
 		<i class='fas fa-folder mx-2'></i>Volver al Listado</a></div>

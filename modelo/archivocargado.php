@@ -281,6 +281,19 @@ public function setMensajeoperacion($mensajeoperacion) {
     $this->mensajeoperacion = $mensajeoperacion;
     return $this;
 }
+
+// -- Métodos propios --
+public function estaCompartido() {
+    // Método que comprueba si no se agotaron las descargas
+    $fechaActual = date("Y-m-d H:i:s");
+    // Esto varía según la fecha actual contra la cantidad de días elegida
+    $sigueActual = $fechaActual < $this->getacefechafincompartir();
+    // No está agotado si la cantidad usada es menos que la cantidad de descargas indicada por el usuario
+    // Como excepción, el usuario puede definir la cantidad en cero al compartir, es decir, sin límite
+    $noAgotado = ( $this->getaccantidaddescarga() == 0 ) || ( $this->getaccantidadusada() < $this->getaccantidaddescarga() );
+    return $sigueActual && $noAgotado;
+}
+
 } // Fin clase archivocargado
 
 

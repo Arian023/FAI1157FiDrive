@@ -5,7 +5,7 @@
         <h5>Arian Acevedo</h5>
         <p class="font-weight-bold text-dark">
         Leg. FAI-1157<br>
-        Cel: 299 6749276<br>
+        Cel: 299 674-9276<br>
         Email: arian.acevedo@est.fi.uncoma.edu.ar
         </P>
     </div>
