@@ -6,8 +6,7 @@ Con FiDrive  podrás compartir todos los archivos que desees de manera sencilla.
 
 - **Autor**: Arian Acevedo
 - **Legajo**: FAI 1157
-- **Email**: arian.acevedo@est.fi.uncoma.edu.ar
-- **Teléfono**: (0299) 674-9276
+- **Twitter**: https://twitter.com/Arian_023
 
 **Programación Web Dinámica 2020 - Universidad Nacional del Comahue**
 
