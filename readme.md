@@ -1,6 +1,8 @@
 # FAI1157FiDrive
 ## Aplicación para evaluar progresos en materia PWD 2020 - UNCo
 
+![Vista del index](https://i.imgur.com/rWpiGJR.jpg "Vista del index")
+
 **Descripción**: FiDrive es una aplicación Web que nos permite subir a la nube archivos, ya sea luego necesitamos compartirlos o simplemente para guardarlos.   
 Con FiDrive  podrás compartir todos los archivos que desees de manera sencilla. Podrá determinar cuánto tiempo deberá estar disponible la URL y cuántas veces se podrá acceder a él; para limitar la cantidad de descargas.
 
